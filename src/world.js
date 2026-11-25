@@ -319,6 +319,7 @@ class RoomScene extends MapScene {
       // antippen / anklicken
       [npc.sprite, mark].forEach(go => { go.setInteractive({ useHandCursor: true }); go.on('pointerdown', () => this.tap(it)); });
     });
+    (R.monsters || []).forEach(m => this.buildMonster(m));
     this.events.on('shutdown', () => { this.vocab = []; });
     // Spielfigur und Kamera
     const s = R.spawn; this.spawnPlayer(tp(s.x), tp(s.y), s.dir);
@@ -345,6 +346,25 @@ class RoomScene extends MapScene {
     this.tweens.add({ targets: e.mark, scale: 1.25, duration: 140, yoyo: true });
     LX.UI.showWord(it.word, () => { e.mark.setFrame(e.v.icon + '_1'); done(); });
     e.mark.setFrame(e.v.icon + '_1');
+  }
+  // Verzaubertes Monster: Daten aus dem Raum (Position, Texte) und dem Lernstoff (implementiert?)
+  buildMonster(m) {
+    const mon = LX.Lernstoff.monster(m.id); if (!mon || !mon.implementiert) return;
+    const x = tp(m.x), y = tp(m.y), key = 'holamander-' + m.stufe + '-gebannt';
+    this.add.image(x, y - 1, 'misc', 'shadow').setDepth(1).setScale(2.4, 1.5);
+    const s = this.add.sprite(x, y, key, 0).setOrigin(0.5, 0.83).setScale(m.scale || 1).setDepth(y);
+    s.anims.play(key + '-idle');
+    this.addWall(x - 11, y - 6, 22, 7);
+    const it = { name: mon.name, x, y, r: 30, bx: x, by: y - 34, monster: m, onUse: (t, done) => this.useMonster(t, done) };
+    this.interactables.push(it);
+    s.setInteractive({ useHandCursor: true }); s.on('pointerdown', () => this.tap(it));
+  }
+  useMonster(it, done) {
+    const m = it.monster, K = LX.Lernstoff.raw.kampf, n = LX.Sammlung.count();
+    const pages = n < K.minWoerter
+      ? m.texte.gesperrt.map(t => t.replace('{count}', n).replace('{min}', K.minWoerter).replace('{fehlt}', K.minWoerter - n))
+      : m.texte.bereit;
+    LX.UI.openDialog(it.name, pages, done);
   }
   exitRoom() { this.fadeTo(() => { const id = this.roomId; this.removePlayer(); this.scene.stop(); this.scene.wake('world', { from: id }); }); }
   update(time, dt) {

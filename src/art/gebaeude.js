@@ -183,6 +183,23 @@ A.fly = function () { const { c, g } = cv(16, 6), { p } = pen(g), W = '#ffffff',
   [[1, 1], [2, 1], [1, 2], [2, 2], [5, 1], [6, 1], [5, 2], [6, 2], [2, 3], [5, 3]].forEach(([x, y]) => p(x, y, W)); [1, 2, 3].forEach(y => { p(3, y, B); p(4, y, B); });
   [[10, 0], [10, 1], [13, 0], [13, 1], [10, 2], [13, 2]].forEach(([x, y]) => p(x, y, W)); [1, 2, 3].forEach(y => { p(11, y, B); p(12, y, B); }); return c; };
 
+/* ---------- Holamander „gebannt“: etwa 40 % entsättigt, graue Kette um den Hals ---------- */
+A.bannen = function (src) {
+  const { c, g } = cv(src.width, src.height);
+  g.drawImage(src, 0, 0);
+  const img = g.getImageData(0, 0, c.width, c.height), d = img.data;
+  for (let i = 0; i < d.length; i += 4) {
+    const gr = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
+    d[i] += (gr - d[i]) * 0.4; d[i + 1] += (gr - d[i + 1]) * 0.4; d[i + 2] += (gr - d[i + 2]) * 0.4;
+  }
+  g.putImageData(img, 0, 0);
+  // Kette: Glieder quer über den Hals, am Ende hängen drei Glieder herab
+  const links = [[24, 24], [24, 26], [23, 28], [23, 30], [22, 32], [22, 34], [22, 36], [23, 38], [23, 40]];
+  links.forEach(([x, y], k) => { g.fillStyle = '#2a2a33'; g.fillRect(x - 1, y - 1, 4, 4); });
+  links.forEach(([x, y], k) => { g.fillStyle = k % 2 ? '#7d808c' : '#c2c5cf'; g.fillRect(x, y, 2, 2); });
+  return c;
+};
+
 /* ---------- Alle Grafiken an Phaser übergeben ---------- */
 A.register = function (scene, shadows) {
   const C = LX.Content, tx = scene.textures;
@@ -211,5 +228,15 @@ A.register = function (scene, shadows) {
   });
   an.create({ key: 'fly', frames: [0, 1].map(f => ({ key: 'fly', frame: f })), frameRate: 9, repeat: -1 });
   an.create({ key: 'duck', frames: [0, 1].map(f => ({ key: 'duck', frame: f })), frameRate: 2, repeat: -1 });
+  // Holamander (Stufe 1–3): Textur "holamander-<stufe>" mit 3 Frames (offen, offen, Blinzeln) und Animation "-idle";
+  // dazu "holamander-<stufe>-gebannt" (verzaubert) mit eigener Animation
+  if (A.holamander) [1, 2, 3].forEach(st => [false, true].forEach(gebannt => {
+    const key = 'holamander-' + st + (gebannt ? '-gebannt' : ''), sheet = document.createElement('canvas');
+    sheet.width = 192; sheet.height = 64;
+    const sg = sheet.getContext('2d', { willReadFrequently: true }); sg.imageSmoothingEnabled = false;
+    [[0, false], [1, false], [0, true]].forEach(([ph, bl], i) => { const f = A.holamander(st, ph, bl); sg.drawImage(gebannt ? A.bannen(f) : f, i * 64, 0); });
+    grid(key, sheet, 64, 64, 3).setFilter(Phaser.Textures.FilterMode.NEAREST);
+    an.create({ key: key + '-idle', frames: [0, 1, 0, 1, 0, 1, 0, 1, 2].map(f => ({ key, frame: f })), frameRate: 2, repeat: -1 });
+  }));
 };
 })();

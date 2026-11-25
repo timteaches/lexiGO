@@ -43,8 +43,9 @@
     { "id": "netz_saludos", "titel": "Begrüßung, Verabschiedung, Befinden", "art": "T",
       "monster": "mon_holamander", "abschnitte": ["b1_u1_acercate"] }
   ],
+  "kampf": { "minWoerter": 5, "monsterLP": 6, "geschwaechtAb": 2, "fangAufgaben": 3 },
   "monster": [
-    { "id": "mon_holamander", "name": "Holamander", "wortnetz": "netz_saludos", "stufe": 1, "implementiert": false }
+    { "id": "mon_holamander", "name": "Holamander", "wortnetz": "netz_saludos", "stufe": 1, "implementiert": true }
   ],
   "woerter": [
     { "id": "w_hola",          "es": "Hola",          "de": "Hallo",                        "wortnetz": "netz_saludos", "gruppe": "begruessung" },

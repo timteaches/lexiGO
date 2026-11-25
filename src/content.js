@@ -76,6 +76,15 @@ LX.Content = {
         { k: 'plant', x: 1.6, y: 5.4 }, { k: 'plant', x: 24.4, y: 5.4 }, { k: 'plant', x: 1.6, y: 14.6 }, { k: 'plant', x: 24.4, y: 14.6 },
         { k: 'table', x: 5.6, y: 6.6 }, { k: 'bed', x: 13.7, y: 6.4 }, { k: 'coatrack', x: 3.2, y: 12.2 }, { k: 'bench', x: 2.6, y: 9.4 }
       ],
+      // Monster im Raum (Position in Kacheln = Standpunkt der Füße; aktiv nur, wenn im Lernstoff "implementiert")
+      monsters: [
+        { id: 'mon_holamander', stufe: 1, x: 8.5, y: 10, scale: 0.6,
+          texte: {
+            gesperrt: ['Graue Fäden halten das Wesen fest. Es kann sich kaum bewegen.',
+                       'Du hast {count} von {min} Wörtern entdeckt. Es fehlen noch {fehlt}.'],
+            bereit: ['Holamander wartet auf dich.']
+          } }
+      ],
       // Personen, die ein Wort darstellen (icon = Bild in der Sprechblase)
       vocab: [
         { id: 'vo_buenos_dias',   word: 'w_buenos_dias',   look: 'r_manana',  x: 3.5,  y: 5.9,  dir: 'down',  icon: 'sun' },
