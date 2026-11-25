@@ -7,7 +7,10 @@ const GAME_HEIGHT = 360;
 const TILE_SIZE = 32;
 
 // Versionsstand, unten rechts im Spiel angezeigt (zum Prüfen, ob der neue Stand geladen ist).
-const GAME_VERSION = '0.1.2';
+const GAME_VERSION = '0.2.0';
+
+// Karte, die beim Start geladen wird (Datei content/maps/<name>.json).
+const START_MAP = 'testwelt';
 
 const config = {
   type: Phaser.AUTO,
@@ -21,7 +24,7 @@ const config = {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH
   },
-  scene: [TitleScene]
+  scene: [WorldScene]
 };
 
 const game = new Phaser.Game(config);

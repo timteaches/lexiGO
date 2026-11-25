@@ -1,3 +1,6 @@
+// HINWEIS: Diese Szene wird seit Version 0.2.0 nicht mehr geladen (siehe index.html);
+// der Spielstart ist WorldScene. Die Datei bleibt vorerst liegen.
+
 // lexiGÓ – erste Szene: einfarbiger Hintergrund, Titel und bewegliche Platzhalterfigur.
 
 const PLAYER_SPEED = 96; // Pixel pro Sekunde (3 Kacheln/s)
