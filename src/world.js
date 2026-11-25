@@ -320,6 +320,7 @@ class RoomScene extends MapScene {
       [npc.sprite, mark].forEach(go => { go.setInteractive({ useHandCursor: true }); go.on('pointerdown', () => this.tap(it)); });
     });
     (R.monsters || []).forEach(m => this.buildMonster(m));
+    if (this._wakeH) this.events.off('wake', this._wakeH); this._wakeH = () => this.onWake(); this.events.on('wake', this._wakeH);
     this.events.on('shutdown', () => { this.vocab = []; });
     // Spielfigur und Kamera
     const s = R.spawn; this.spawnPlayer(tp(s.x), tp(s.y), s.dir);
@@ -361,10 +362,13 @@ class RoomScene extends MapScene {
   }
   useMonster(it, done) {
     const m = it.monster, K = LX.Lernstoff.raw.kampf, n = LX.Sammlung.count();
-    const pages = n < K.minWoerter
-      ? m.texte.gesperrt.map(t => t.replace('{count}', n).replace('{min}', K.minWoerter).replace('{fehlt}', K.minWoerter - n))
-      : m.texte.bereit;
-    LX.UI.openDialog(it.name, pages, done);
+    if (n >= K.minWoerter) { done(); this.fadeTo(() => { this.scene.sleep(); this.scene.run('battle', { room: this.roomId, monster: m }); }); return; }
+    LX.UI.openDialog(it.name, m.texte.gesperrt.map(t => t.replace('{count}', n).replace('{min}', K.minWoerter).replace('{fehlt}', K.minWoerter - n)), done);
+  }
+  // zurück aus dem Kampf
+  onWake() {
+    this.input.keyboard.resetKeys(); this.transitioning = false; this.cameras.main.fadeIn(220, 20, 14, 12);
+    LX.Game.active = this; LX.UI.setLocation(LX.Lernstoff.label(this.R.abschnitt), true);
   }
   exitRoom() { this.fadeTo(() => { const id = this.roomId; this.removePlayer(); this.scene.stop(); this.scene.wake('world', { from: id }); }); }
   update(time, dt) {
@@ -388,7 +392,7 @@ LX.Game = {
       type: Phaser.AUTO, parent: 'game', backgroundColor: '#3d7340', pixelArt: true, roundPixels: true,
       scale: { mode: Phaser.Scale.RESIZE, width: window.innerWidth, height: window.innerHeight },
       physics: { default: 'arcade', arcade: { gravity: { x: 0, y: 0 }, debug: false } },
-      scene: [WorldScene, RoomScene]
+      scene: [WorldScene, RoomScene, LX.BattleScene]
     });
   },
   start() { if (this.world) this.world.startPlaying(); },

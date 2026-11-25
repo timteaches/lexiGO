@@ -41,7 +41,7 @@
 <title>lexiGÓ – Welt 1 · 1.2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=3.1">
+<link rel="stylesheet" href="css/style.css?v=3.2">
 </head>
 <body>
 <div id="game"></div>
@@ -77,6 +77,20 @@
     <p class="sub" id="wordsSum"></p>
     <div class="wlist" id="wordsList"></div>
     <button class="btn primary" data-act="close-words">Schließen</button>
+  </div>
+</div>
+
+<div class="battle" id="battle" hidden>
+  <div class="bt-top">
+    <div class="bt-mon"><b id="btName">Holamander</b><div class="bt-bar"><i id="btFill"></i></div><span class="bt-lp" id="btLp"></span></div>
+    <button class="btn bt-back" id="btBack">Zurück</button>
+  </div>
+  <div class="bt-panel" id="btPanel">
+    <p class="bt-msg" id="btMsg" aria-live="polite"></p>
+    <div class="bt-q"><b class="bt-es" id="btEs" lang="es"></b><button class="speak" id="btSpeak" aria-label="Aussprache anhören"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="#17393f"/><path d="M16 8.5c1.2 1 1.8 2.2 1.8 3.5s-.6 2.5-1.8 3.5M18.5 6c2 1.6 3 3.6 3 6s-1 4.4-3 6" stroke="#17393f" stroke-width="2" fill="none" stroke-linecap="round"/></svg></button></div>
+    <div class="bt-ans" id="btAns"></div>
+    <button class="btn primary bt-next" id="btNext" hidden>Weiter</button>
+    <div class="bt-weak" id="btWeak" hidden><span id="btWeakText"></span><button class="btn primary" id="btCatch">Fangen</button></div>
   </div>
 </div>
 
@@ -127,17 +141,18 @@
 <div class="toast" id="toast" hidden></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.80.1/phaser.min.js"></script>
-<script src="src/content.js?v=3.1"></script>
-<script src="src/art/figuren.js?v=3.1"></script>
-<script src="src/art/boden.js?v=3.1"></script>
-<script src="src/art/gebaeude.js?v=3.1"></script>
-<script src="src/art/lernraum.js?v=3.1"></script>
-<script src="src/art-monster.js?v=3.1"></script>
-<script src="src/lernstoff.js?v=3.1"></script>
-<script src="src/state.js?v=3.1"></script>
-<script src="src/input.js?v=3.1"></script>
-<script src="src/ui.js?v=3.1"></script>
-<script src="src/world.js?v=3.1"></script>
-<script src="src/main.js?v=3.1"></script>
+<script src="src/content.js?v=3.2"></script>
+<script src="src/art/figuren.js?v=3.2"></script>
+<script src="src/art/boden.js?v=3.2"></script>
+<script src="src/art/gebaeude.js?v=3.2"></script>
+<script src="src/art/lernraum.js?v=3.2"></script>
+<script src="src/art-monster.js?v=3.2"></script>
+<script src="src/lernstoff.js?v=3.2"></script>
+<script src="src/state.js?v=3.2"></script>
+<script src="src/input.js?v=3.2"></script>
+<script src="src/ui.js?v=3.2"></script>
+<script src="src/world.js?v=3.2"></script>
+<script src="src/battle.js?v=3.2"></script>
+<script src="src/main.js?v=3.2"></script>
 </body>
 </html>

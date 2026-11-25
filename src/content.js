@@ -45,6 +45,17 @@ LX.Content = {
     touch: 'Tipp: Mit dem Joystick links läufst du. Mit dem E-Knopf rechts sprichst du mit anderen.'
   },
 
+  // Kampf-Texte (Werte wie Lebenspunkte stehen in content/lernstoff.json, Block "kampf"); [[…]] = Spanisch
+  battle: {
+    frage: 'Was bedeutet dieses Wort?',
+    start: 'Holamander: [[¡Hola, {name}!]] Erobere die Wörter zurück.',
+    richtig: ['Wort zurückerobert!', 'Treffer! Das Wort gehört {name} wieder.', 'Die grauen Fäden reißen!'],
+    falsch: 'Nicht ganz. Richtig ist: {antwort}. Das Wort kommt gleich noch einmal.',
+    geschwaecht: 'Holamander ist geschwächt!',
+    fangenBald: 'Fangen kommt gleich.',
+    lp: 'LP'
+  },
+
   areas: [
     { name: 'Dorfplatz', r: [18, 14, 17, 14] },
     { name: 'Mercado', r: [37, 12, 14, 19] },
@@ -81,8 +92,7 @@ LX.Content = {
         { id: 'mon_holamander', stufe: 1, x: 8.5, y: 10, scale: 0.6,
           texte: {
             gesperrt: ['Graue Fäden halten das Wesen fest. Es kann sich kaum bewegen.',
-                       'Du hast {count} von {min} Wörtern entdeckt. Es fehlen noch {fehlt}.'],
-            bereit: ['Holamander wartet auf dich.']
+                       'Du hast {count} von {min} Wörtern entdeckt. Es fehlen noch {fehlt}.']
           } }
       ],
       // Personen, die ein Wort darstellen (icon = Bild in der Sprechblase)

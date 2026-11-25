@@ -12,7 +12,7 @@
     console.error('Lernstoff konnte nicht geladen werden:', err);
     document.getElementById('dataErr').hidden = false; document.getElementById('goBtn').disabled = true;
   };
-  fetch('content/lernstoff.json?v=3.1')
+  fetch('content/lernstoff.json?v=3.2')
     .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
     .then(daten => { LX.Lernstoff.init(daten); start(); })
     .catch(datenFehler);
