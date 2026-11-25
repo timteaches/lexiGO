@@ -26,7 +26,7 @@
   }
   const L = LX.Lernstoff = {
     raw,
-    init(daten) { Object.assign(raw, daten); indexieren(); pruefen(); LX.Sammlung.load(); },
+    init(daten) { Object.assign(raw, daten); indexieren(); pruefen(); LX.Sammlung.load(); LX.Monster.load(); },
     wort: id => idx.woerter[id], netz: id => idx.netze[id], abschnitt: id => idx.abschnitte[id], einheit: id => idx.einheiten[id], monster: id => idx.monster[id],
     woerterImNetz: nid => raw.woerter.filter(w => w.wortnetz === nid),
     woerterImAbschnitt: aid => { const a = idx.abschnitte[aid]; return a ? a.wortnetze.flatMap(n => L.woerterImNetz(n)) : []; },
@@ -54,6 +54,16 @@
     save() { try { sessionStorage.setItem(this.KEY, JSON.stringify(this.ids)); } catch (e) {} },
     has(id) { return this.ids.includes(id); },
     add(id) { if (!L.wort(id) || this.has(id)) return false; this.ids.push(id); this.save(); return true; },
+    count() { return this.ids.length; }
+  };
+
+  // Gefangene Monster dieser Sitzung (sessionStorage), nach dem Muster von LX.Sammlung
+  LX.Monster = {
+    ids: [], KEY: 'lexigo.monster.v1',
+    load() { try { const v = JSON.parse(sessionStorage.getItem(this.KEY) || '[]'); if (Array.isArray(v)) this.ids = v.filter(id => L.monster(id)); } catch (e) {} },
+    save() { try { sessionStorage.setItem(this.KEY, JSON.stringify(this.ids)); } catch (e) {} },
+    has(id) { return this.ids.includes(id); },
+    add(id) { if (!L.monster(id) || this.has(id)) return false; this.ids.push(id); this.save(); return true; },
     count() { return this.ids.length; }
   };
 

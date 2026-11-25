@@ -52,8 +52,22 @@ LX.Content = {
     richtig: ['Wort zurückerobert!', 'Treffer! Das Wort gehört {name} wieder.', 'Die grauen Fäden reißen!'],
     falsch: 'Nicht ganz. Richtig ist: {antwort}. Das Wort kommt gleich noch einmal.',
     geschwaecht: 'Holamander ist geschwächt!',
-    fangenBald: 'Fangen kommt gleich.',
+    fangStart: '{name} will {monster} fangen! Übersetze {n} Wörter ins Spanische.',
+    fangFrage: 'Fangen – Aufgabe {i} von {n}: Wie heißt das auf Spanisch?',
+    fangRichtig: 'Richtig!',
+    fangFalsch: 'Nicht ganz. Richtig wäre: {antwort}. {monster} hat sich losgerissen – versuch es einfach noch einmal.',
+    gefangen: ['{name} hat {monster} gefangen!', '{name} ist jetzt Monsterfänger{|in}.'],
     lp: 'LP'
+  },
+
+  // „Meine Monster“: Grafik-Funktion je Monster-ID (LX.Art.<name>) und Texte der Liste
+  monsterArt: { mon_holamander: 'holamander' },
+  monsterliste: {
+    leer: 'Noch kein Monster gefangen. Schwäche ein Monster im Kampf und fange es dann mit Übersetzungen.',
+    summe: '{n} von {m} Monstern gefangen',
+    woerter: '{n} von {m} Wörtern entdeckt',
+    stufe: 'Stufe {n}',
+    gesperrt: 'noch nicht freigeschaltet'
   },
 
   areas: [

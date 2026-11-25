@@ -319,7 +319,7 @@ class RoomScene extends MapScene {
       // antippen / anklicken
       [npc.sprite, mark].forEach(go => { go.setInteractive({ useHandCursor: true }); go.on('pointerdown', () => this.tap(it)); });
     });
-    (R.monsters || []).forEach(m => this.buildMonster(m));
+    this.monsterObjs = []; (R.monsters || []).forEach(m => this.buildMonster(m));
     if (this._wakeH) this.events.off('wake', this._wakeH); this._wakeH = () => this.onWake(); this.events.on('wake', this._wakeH);
     this.events.on('shutdown', () => { this.vocab = []; });
     // Spielfigur und Kamera
@@ -350,15 +350,16 @@ class RoomScene extends MapScene {
   }
   // Verzaubertes Monster: Daten aus dem Raum (Position, Texte) und dem Lernstoff (implementiert?)
   buildMonster(m) {
-    const mon = LX.Lernstoff.monster(m.id); if (!mon || !mon.implementiert) return;
+    const mon = LX.Lernstoff.monster(m.id); if (!mon || !mon.implementiert || LX.Monster.has(m.id)) return;
     const x = tp(m.x), y = tp(m.y), key = 'holamander-' + m.stufe + '-gebannt';
-    this.add.image(x, y - 1, 'misc', 'shadow').setDepth(1).setScale(2.4, 1.5);
+    const shadow = this.add.image(x, y - 1, 'misc', 'shadow').setDepth(1).setScale(2.4, 1.5);
     const s = this.add.sprite(x, y, key, 0).setOrigin(0.5, 0.83).setScale(m.scale || 1).setDepth(y);
     s.anims.play(key + '-idle');
-    this.addWall(x - 11, y - 6, 22, 7);
+    this.addWall(x - 11, y - 6, 22, 7); const wall = this.walls[this.walls.length - 1];
     const it = { name: mon.name, x, y, r: 30, bx: x, by: y - 34, monster: m, onUse: (t, done) => this.useMonster(t, done) };
     this.interactables.push(it);
     s.setInteractive({ useHandCursor: true }); s.on('pointerdown', () => this.tap(it));
+    this.monsterObjs.push({ id: m.id, parts: [shadow, s], wall, it });
   }
   useMonster(it, done) {
     const m = it.monster, K = LX.Lernstoff.raw.kampf, n = LX.Sammlung.count();
@@ -368,6 +369,9 @@ class RoomScene extends MapScene {
   // zurück aus dem Kampf
   onWake() {
     this.input.keyboard.resetKeys(); this.transitioning = false; this.cameras.main.fadeIn(220, 20, 14, 12);
+    // gefangene Monster sind weg: Grafik, Kollision und Interaktion entfernen
+    this.monsterObjs.filter(o => LX.Monster.has(o.id)).forEach(o => { o.parts.forEach(p => p.destroy()); o.wall.body.enable = false; this.interactables = this.interactables.filter(i => i !== o.it); if (this.target === o.it) this.target = null; });
+    this.monsterObjs = this.monsterObjs.filter(o => !LX.Monster.has(o.id));
     LX.Game.active = this; LX.UI.setLocation(LX.Lernstoff.label(this.R.abschnitt), true);
   }
   exitRoom() { this.fadeTo(() => { const id = this.roomId; this.removePlayer(); this.scene.stop(); this.scene.wake('world', { from: id }); }); }

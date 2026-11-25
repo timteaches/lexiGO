@@ -15,13 +15,13 @@ function renderTokens(tk, n) {
 }
 
 const UI = LX.UI = {
-  screen: 'start', dlg: null, menu: false, pending: false, isTouch: false, card: null, wordsOpen: false,
-  isBlocking() { return this.screen !== 'game' || !!this.dlg || this.menu || !!this.card || this.wordsOpen; },
+  screen: 'start', dlg: null, menu: false, pending: false, isTouch: false, card: null, wordsOpen: false, monstersOpen: false,
+  isBlocking() { return this.screen !== 'game' || !!this.dlg || this.menu || !!this.card || this.wordsOpen || this.monstersOpen; },
   init() {
     this.el = { start: $('#start'), hud: $('#hud'), hint: $('#hint'), hintName: $('#hintName'), dialog: $('#dialog'), dlgName: $('#dlgName'), dlgText: $('#dlgText'), dlgMore: $('#dlgMore'),
       menu: $('#menu'), touch: $('#touch'), name: $('#hudName'), loc: $('#hudLoc'), face: $('#hudFace'), toast: $('#toast'), ctrl: $('#ctrlBox'), menuWho: $('#menuWho'),
       wordcard: $('#wordcard'), wcNew: $('#wcNew'), wcEs: $('#wcEs'), wcDe: $('#wcDe'), wcCtx: $('#wcCtx'), wcCount: $('#wcCount'), wcSpeak: $('#wcSpeak'),
-      words: $('#words'), wordsList: $('#wordsList'), wordsSum: $('#wordsSum'), wordsCount: $('#wordsCount'), wordsBtn: $('#wordsBtn') };
+      words: $('#words'), wordsList: $('#wordsList'), wordsSum: $('#wordsSum'), wordsCount: $('#wordsCount'), wordsBtn: $('#wordsBtn'), monsters: $('#monsters'), monstersList: $('#monstersList'), monstersSum: $('#monstersSum') };
     this.speakerSvg = this.el.wcSpeak.innerHTML;
     this.isTouch = I.isTouch(); document.body.classList.toggle('touch-on', this.isTouch);
     document.querySelectorAll('.k-keys').forEach(e => e.hidden = this.isTouch);
@@ -44,6 +44,7 @@ const UI = LX.UI = {
       const say = e.target.closest('[data-say]'); if (say) { const w = LX.Lernstoff.wort(say.dataset.say); if (w) LX.Speech.speak(w.es); return; }
       const b = e.target.closest('[data-act]'); if (b || e.target === this.el.words) this.closeWords();
     });
+    this.el.monsters.addEventListener('click', e => { const b = e.target.closest('[data-act]'); if (b || e.target === this.el.monsters) this.closeMonsters(); });
     this.updateWordsBtn(false);
     ['gesturestart', 'dblclick'].forEach(ev => document.addEventListener(ev, e => e.preventDefault()));
   },
@@ -55,12 +56,12 @@ const UI = LX.UI = {
       else if (['Enter', ' ', 'e', 'E'].includes(k)) { e.preventDefault(); this.start(); }
       return;
     }
-    if (k === 'Escape') { e.preventDefault(); if (this.card) this.closeWord(); else if (this.dlg) this.closeDialog(); else if (this.wordsOpen) this.closeWords(); else if (this.menu) this.closeMenu(); else this.openMenu(); return; }
-    if (this.menu || this.wordsOpen) return;     // dort bedient Enter die Knöpfe
+    if (k === 'Escape') { e.preventDefault(); if (this.card) this.closeWord(); else if (this.dlg) this.closeDialog(); else if (this.wordsOpen) this.closeWords(); else if (this.monstersOpen) this.closeMonsters(); else if (this.menu) this.closeMenu(); else this.openMenu(); return; }
+    if (this.menu || this.wordsOpen || this.monstersOpen) return;     // dort bedient Enter die Knöpfe
     if (k === 'e' || k === 'E' || k === 'Enter') { e.preventDefault(); if (!e.repeat) this.action(); }
   },
   action() {
-    if (this.screen !== 'game' || this.menu || this.wordsOpen) return;
+    if (this.screen !== 'game' || this.menu || this.wordsOpen || this.monstersOpen) return;
     if (this.card) this.closeWord(); else if (this.dlg) this.advance(); else if (LX.Game) LX.Game.interact();
   },
   select(f) {
@@ -94,7 +95,7 @@ const UI = LX.UI = {
     if (!S.introSeen) { S.introSeen = true; S.save(); setTimeout(() => { if (this.screen === 'game') this.openDialog(LX.Content.intro.name, LX.Content.intro.pages); }, 450); }
   },
   backToStart() {
-    this.closeMenu(); this.closeDialog(); this.closeWord(); this.closeWords(); this.screen = 'start';
+    this.closeMenu(); this.closeDialog(); this.closeWord(); this.closeWords(); this.closeMonsters(); this.screen = 'start';
     this.el.hud.hidden = true; this.el.touch.hidden = true; this.el.hint.hidden = true; this.el.start.hidden = false;
     I.touch = { x: 0, y: 0 }; LX.Game.toStart();
     const sel = this.cards.find(c => c.dataset.figur === S.figur); if (sel) sel.focus();
@@ -122,7 +123,7 @@ const UI = LX.UI = {
   },
   /* Sammlung „Meine Wörter“ */
   openWords() {
-    if (this.screen !== 'game') return; this.closeWord(); this.closeDialog(); this.closeMenu();
+    if (this.screen !== 'game') return; this.closeWord(); this.closeDialog(); this.closeMenu(); this.closeMonsters();
     const LS = LX.Lernstoff, S2 = LX.Sammlung, svg = this.speakerSvg; let html = '';
     LS.spielbareAbschnitte().forEach(ab => {
       ab.wortnetze.forEach(nid => {
@@ -143,6 +144,42 @@ const UI = LX.UI = {
     const b = this.el.words.querySelector('.btn'); if (b) b.focus();
   },
   closeWords() { if (!this.wordsOpen) return; this.wordsOpen = false; this.el.words.hidden = true; if (document.activeElement) document.activeElement.blur(); },
+  /* „Meine Monster“: gefangene Monster mit Stufen (Stufe 2 und 3 noch gesperrt) */
+  openMonsters() {
+    if (this.screen !== 'game') return; this.closeWord(); this.closeDialog(); this.closeMenu(); this.closeWords();
+    const LS = LX.Lernstoff, T = LX.Content.monsterliste, list = this.el.monstersList, fill = (s, o) => Object.keys(o).reduce((t, k) => t.split('{' + k + '}').join(o[k]), s);
+    list.textContent = ''; this.stopMonsterAnim();
+    const anims = [];
+    LX.Monster.ids.forEach(id => {
+      const mon = LS.monster(id), art = LX.Art[LX.Content.monsterArt[id]]; if (!mon || !art) return;
+      const netz = LS.netz(mon.wortnetz), words = LS.woerterImNetz(mon.wortnetz), got = words.filter(w => LX.Sammlung.has(w.id)).length;
+      const card = document.createElement('div'); card.className = 'mcard';
+      card.innerHTML = `<div class="mhead"><b>${esc(mon.name)}</b><span>${esc(netz ? netz.titel : '')}</span><span class="mcount">${esc(fill(T.woerter, { n: got, m: words.length }))}</span></div><div class="mtiles"></div>`;
+      const tiles = card.querySelector('.mtiles');
+      [1, 2, 3].forEach(st => {
+        const locked = st > mon.stufe, tile = document.createElement('div'); tile.className = 'mtile' + (locked ? ' locked' : '');
+        const cv = document.createElement('canvas'); cv.width = cv.height = 64; const g = cv.getContext('2d', { willReadFrequently: true }); g.imageSmoothingEnabled = false;
+        const frames = [art(st, 0, false), art(st, 1, false), art(st, 0, true)];
+        const draw = f => { g.clearRect(0, 0, 64, 64); g.drawImage(frames[f], 0, 0);
+          if (locked) { const d = g.getImageData(0, 0, 64, 64), p = d.data; for (let i = 0; i < p.length; i += 4) if (p[i + 3]) { p[i] = 42; p[i + 1] = 36; p[i + 2] = 56; } g.putImageData(d, 0, 0); } };
+        draw(0); if (!locked) anims.push(draw);
+        tile.appendChild(cv);
+        tile.insertAdjacentHTML('beforeend', `<small>${esc(fill(T.stufe, { n: st }))}</small>` + (locked ? `<svg class="lock" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2" fill="#f1ead8" stroke="#17393f" stroke-width="2"/><path d="M8 11V8a4 4 0 018 0v3" fill="none" stroke="#17393f" stroke-width="2.4"/></svg><span>${esc(T.gesperrt)}</span>` : ''));
+        tiles.appendChild(tile);
+      });
+      list.appendChild(card);
+    });
+    if (!LX.Monster.count()) list.innerHTML = `<p class="wsoon">${esc(T.leer)}</p>`;
+    const total = LS.raw.monster.filter(m => m.implementiert).length;
+    this.el.monstersSum.textContent = fill(T.summe, { n: LX.Monster.count(), m: total });
+    // Animation Stufe 1: Bildfolge wie im Lernraum, 2 Bilder pro Sekunde
+    const seq = [0, 1, 0, 1, 0, 1, 0, 1, 2]; let step = 0;
+    if (anims.length) this.monsterTimer = setInterval(() => { step = (step + 1) % seq.length; anims.forEach(d => d(seq[step])); }, 500);
+    this.monstersOpen = true; this.el.monsters.hidden = false; this.el.hint.hidden = true;
+    const b = this.el.monsters.querySelector('.btn'); if (b) b.focus();
+  },
+  stopMonsterAnim() { if (this.monsterTimer) { clearInterval(this.monsterTimer); this.monsterTimer = null; } },
+  closeMonsters() { if (!this.monstersOpen) return; this.monstersOpen = false; this.el.monsters.hidden = true; this.stopMonsterAnim(); if (document.activeElement) document.activeElement.blur(); },
   toggleWords() { if (this.wordsOpen) this.closeWords(); else this.openWords(); },
   /* Dialog mit Schreibmaschinen-Effekt */
   openDialog(name, pages, onClose) {
@@ -168,7 +205,7 @@ const UI = LX.UI = {
   },
   closeMenu() { if (!this.menu) return; this.menu = false; this.el.menu.hidden = true; this.el.ctrl.hidden = true; if (document.activeElement) document.activeElement.blur(); },
   toggleMenu() { if (this.menu) this.closeMenu(); else this.openMenu(); },
-  menuAct(a) { if (a === 'resume') this.closeMenu(); else if (a === 'controls') this.el.ctrl.hidden = !this.el.ctrl.hidden; else if (a === 'switch') this.backToStart(); else if (a === 'words') this.openWords(); },
+  menuAct(a) { if (a === 'resume') this.closeMenu(); else if (a === 'controls') this.el.ctrl.hidden = !this.el.ctrl.hidden; else if (a === 'switch') this.backToStart(); else if (a === 'words') this.openWords(); else if (a === 'monsters') this.openMonsters(); },
   toast(msg, ms = 4000) { const t = this.el.toast; t.textContent = msg; t.hidden = false; clearTimeout(this.tt); this.tt = setTimeout(() => t.hidden = true, ms); },
   engineMissing() { document.getElementById('engineErr').hidden = false; document.getElementById('goBtn').disabled = true; }
 };

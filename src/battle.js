@@ -20,15 +20,15 @@ const B = LX.Battle = {
     e.back.addEventListener('click', () => this.leave());
     e.speak.addEventListener('click', () => { if (this.cur) LX.Speech.speak(this.cur.es); });
     e.ans.addEventListener('click', ev => { const b = ev.target.closest('button[data-id]'); if (b) this.answer(b.dataset.id); });
-    e.next.addEventListener('click', () => this.nextQuestion());
-    e.catch.addEventListener('click', () => LX.UI.toast(text(C.battle.fangenBald), 2500));
+    e.next.addEventListener('click', () => { if (this.mode === 'fertig') this.leave(); else this.nextQuestion(); });
+    e.catch.addEventListener('click', () => this.startCatch());
     document.addEventListener('keydown', ev => { if (this.active && ev.key === 'Escape') { ev.preventDefault(); this.leave(); } });
   },
 
   open(scene, data) {
     if (!this.el) this.init();
     const K = LX.Lernstoff.raw.kampf, mon = LX.Lernstoff.monster(data.monster.id), UI = LX.UI, e = this.el;
-    Object.assign(this, { scene, K, mon, active: true, lp: K.monsterLP, weak: false, last: null, queue: [], busy: false, cur: null });
+    Object.assign(this, { scene, data, K, mon, active: true, lp: K.monsterLP, weak: false, last: null, queue: [], busy: false, cur: null, mode: 'quiz', fang: null });
     UI.closeDialog(); UI.closeWord(); UI.closeWords(); UI.closeMenu();
     UI.screen = 'battle'; UI.el.hud.hidden = true; UI.el.touch.hidden = true; UI.el.hint.hidden = true; LX.Input.touch = { x: 0, y: 0 };
     e.root.hidden = false; e.name.textContent = mon.name; e.weak.hidden = true; e.next.hidden = true; e.speak.hidden = !LX.Speech.ok;
@@ -80,14 +80,16 @@ const B = LX.Battle = {
     if (!this.active) return;
     const id = this.nextId(); if (!id) return;
     const w = this.cur = LX.Lernstoff.wort(id); this.last = id; this.busy = false;
-    this.say(text(C.battle.frage));
-    this.el.es.textContent = w.es; this.el.next.hidden = true; this.el.ans.classList.remove('locked');
+    this.mode = 'quiz'; this.say(text(C.battle.frage));
+    this.el.es.textContent = w.es; this.el.es.lang = 'es'; this.el.es.classList.remove('de'); this.el.speak.hidden = !LX.Speech.ok;
+    this.el.weak.hidden = !this.weak; this.el.next.hidden = true; this.el.ans.classList.remove('locked');
     this.el.ans.innerHTML = this.options(w).map(o => `<button type="button" data-id="${esc(o.id)}">${esc(o.de)}</button>`).join('');
     LX.Speech.speak(w.es);
     this.scene.layout();
   },
   answer(id) {
     if (!this.active || this.busy || !this.cur) return;
+    if (this.mode === 'fang') return this.answerFang(id);
     this.busy = true;
     const w = this.cur, ok = id === w.id, e = this.el;
     e.ans.classList.add('locked');
@@ -107,6 +109,55 @@ const B = LX.Battle = {
       this.queue = this.queue.filter(x => x !== w.id); this.queue.splice(Math.min(2, this.queue.length), 0, w.id);   // kommt früher wieder
       e.next.hidden = false; this.scene.layout();
     }
+  },
+
+  /* ---------- Fangen: fangAufgaben Übersetzungen (Deutsch → Spanisch), alle müssen stimmen ---------- */
+  startCatch() {
+    if (!this.active || this.busy || !this.weak || this.mode !== 'quiz') return;
+    const pool = this.pool(), n = this.K.fangAufgaben, list = [];
+    while (list.length < n) {                                             // erst alle Wörter einmal, dann wieder von vorn
+      let r = shuffle(pool); if (pool.length > 1 && r[0] === list[list.length - 1]) r.push(r.shift());
+      list.push(...r.slice(0, n - list.length));
+    }
+    this.mode = 'fang'; this.fang = { list, i: 0 }; this.el.weak.hidden = true; this.el.next.hidden = true;
+    this.say(text(C.battle.fangStart, { monster: this.mon.name, n: list.length }));
+    this.timer = setTimeout(() => this.fangQuestion(), 1100);
+  },
+  fangQuestion() {
+    if (!this.active) return;
+    const f = this.fang, w = this.cur = LX.Lernstoff.wort(f.list[f.i]), e = this.el, got = new Set(this.pool()), seen = new Set([w.es]), others = [];
+    this.busy = false;
+    this.say(text(C.battle.fangFrage, { i: f.i + 1, n: f.list.length }));
+    e.es.textContent = w.de; e.es.lang = 'de'; e.es.classList.add('de'); e.speak.hidden = true; e.ans.classList.remove('locked');
+    shuffle(LX.Lernstoff.woerterImNetz(w.wortnetz)).forEach(x => { if (x.id !== w.id && got.has(x.id) && !seen.has(x.es) && others.length < 3) { seen.add(x.es); others.push(x); } });
+    e.ans.innerHTML = shuffle(others.concat(w)).map(o => `<button type="button" class="es" lang="es" data-id="${esc(o.id)}">${esc(o.es)}</button>`).join('');
+    this.scene.layout();
+  },
+  answerFang(id) {
+    if (this.busy) return;
+    this.busy = true;
+    const w = this.cur, ok = id === w.id, e = this.el, f = this.fang;
+    e.ans.classList.add('locked');
+    e.ans.querySelectorAll('button').forEach(b => { if (b.dataset.id === w.id) b.classList.add('right'); else if (b.dataset.id === id) b.classList.add('wrong'); });
+    if (ok) {
+      this.say(text(C.battle.fangRichtig)); LX.Speech.speak(w.es); f.i++;
+      this.timer = setTimeout(() => { if (f.i >= f.list.length) this.finishCatch(); else this.fangQuestion(); }, 1000);
+    } else {                                                              // Versuch endet, zurück in den Kampf
+      this.say(text(C.battle.fangFalsch, { antwort: w.es, monster: this.mon.name }));
+      this.scene.monsterWard(); this.mode = 'quiz'; this.fang = null;
+      e.next.hidden = false; this.scene.layout();
+    }
+  },
+  finishCatch() {
+    if (!this.active) return;
+    const e = this.el; this.busy = true;
+    e.es.textContent = ''; e.ans.innerHTML = ''; e.speak.hidden = true;
+    this.scene.catchMonster(() => {
+      if (!this.active) return;
+      LX.Monster.add(this.data.monster.id);
+      this.say(C.battle.gefangen.map(s => text(s, { monster: this.mon.name })).join(' '));
+      this.mode = 'fertig'; e.next.hidden = false; this.scene.layout();
+    });
   }
 };
 
@@ -157,6 +208,26 @@ LX.BattleScene = class BattleScene extends Phaser.Scene {
   monsterWard() {                      // abwehren: schütteln
     const m = this.mon, x0 = this.mx; this.shaking = true;
     this.tweens.add({ targets: m, x: x0 + 9, duration: 65, yoyo: true, repeat: 4, onComplete: () => { this.shaking = false; m.setPosition(this.mx, this.my); } });
+  }
+  // Fang-Animation: das Monster schrumpft in eine goldene Lichtkugel
+  catchMonster(cb) {
+    const m = this.mon, k = this.k, cx = m.x, cy = m.y - m.displayHeight * 0.38;
+    if (!this.textures.exists('orb')) {
+      const A = LX.Art, c = document.createElement('canvas'); c.width = c.height = 32; const g = c.getContext('2d'); g.imageSmoothingEnabled = false;
+      for (let r = 0; r < 8; r++) { const a = r * Math.PI / 4; g.fillStyle = r % 2 ? '#f3912b' : '#ffd23f'; g.fillRect(Math.round(16 + Math.cos(a) * 12) - 1, Math.round(16 + Math.sin(a) * 12) - 1, 2, 2); }
+      A.ell(g, 16, 16, 9, 9, '#ffd23f'); A.ell(g, 16, 16, 6.5, 6.5, '#ffe066'); A.ell(g, 15, 15, 3.5, 3.5, '#fff3b0'); g.fillStyle = '#ffffff'; g.fillRect(12, 11, 2, 2);
+      A.outline(g, 0, 0, 32, 32, '#b5651d'); this.textures.addCanvas('orb', c).setFilter(Phaser.Textures.FilterMode.NEAREST);
+    }
+    this.shaking = true; this.tweens.killTweensOf(m); m.setTintFill(0xfff0a0);
+    const orb = this.add.image(cx, cy, 'orb').setDepth(40).setScale(0);
+    this.tweens.add({ targets: this.mshadow, alpha: 0, duration: 500 });
+    this.tweens.add({ targets: orb, scale: k * 0.9, duration: 760, ease: 'Sine.easeOut' });
+    this.tweens.add({ targets: m, x: cx, y: cy, scaleX: 0, scaleY: 0, duration: 760, ease: 'Cubic.easeIn', onComplete: () => {
+      m.setVisible(false);
+      this.tweens.add({ targets: orb, scale: k * 1.15, duration: 220, yoyo: true, repeat: 2, onComplete: () => {
+        this.tweens.add({ targets: orb, y: cy - 24, alpha: 0, scale: k * 1.6, duration: 380, ease: 'Quad.easeOut', onComplete: () => { orb.destroy(); cb(); } });
+      } });
+    } });
   }
   monsterWeak() { this.mon.anims.timeScale = 0.5; this.mon.setAlpha(0.92); }
   leaveBattle() {

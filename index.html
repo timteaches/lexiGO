@@ -41,7 +41,7 @@
 <title>lexiGÓ – Welt 1 · 1.2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=3.2">
+<link rel="stylesheet" href="css/style.css?v=3.3">
 </head>
 <body>
 <div id="game"></div>
@@ -80,6 +80,15 @@
   </div>
 </div>
 
+<div class="overlay" id="monsters" hidden>
+  <div class="panel wide" role="dialog" aria-label="Meine Monster">
+    <h2>Meine Monster</h2>
+    <p class="sub" id="monstersSum"></p>
+    <div class="wlist" id="monstersList"></div>
+    <button class="btn primary" data-act="close-monsters">Schließen</button>
+  </div>
+</div>
+
 <div class="battle" id="battle" hidden>
   <div class="bt-top">
     <div class="bt-mon"><b id="btName">Holamander</b><div class="bt-bar"><i id="btFill"></i></div><span class="bt-lp" id="btLp"></span></div>
@@ -100,6 +109,7 @@
     <p class="sub" id="menuWho">Pedro · Villapalabra</p>
     <button class="btn primary" data-act="resume">Weiterspielen</button>
     <button class="btn" data-act="words">Meine Wörter</button>
+    <button class="btn" data-act="monsters">Meine Monster</button>
     <button class="btn" data-act="controls">Steuerung</button>
     <button class="btn" data-act="switch">Figur wechseln</button>
     <div class="ctrl" id="ctrlBox" hidden>
@@ -141,18 +151,18 @@
 <div class="toast" id="toast" hidden></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.80.1/phaser.min.js"></script>
-<script src="src/content.js?v=3.2"></script>
-<script src="src/art/figuren.js?v=3.2"></script>
-<script src="src/art/boden.js?v=3.2"></script>
-<script src="src/art/gebaeude.js?v=3.2"></script>
-<script src="src/art/lernraum.js?v=3.2"></script>
-<script src="src/art-monster.js?v=3.2"></script>
-<script src="src/lernstoff.js?v=3.2"></script>
-<script src="src/state.js?v=3.2"></script>
-<script src="src/input.js?v=3.2"></script>
-<script src="src/ui.js?v=3.2"></script>
-<script src="src/world.js?v=3.2"></script>
-<script src="src/battle.js?v=3.2"></script>
-<script src="src/main.js?v=3.2"></script>
+<script src="src/content.js?v=3.3"></script>
+<script src="src/art/figuren.js?v=3.3"></script>
+<script src="src/art/boden.js?v=3.3"></script>
+<script src="src/art/gebaeude.js?v=3.3"></script>
+<script src="src/art/lernraum.js?v=3.3"></script>
+<script src="src/art-monster.js?v=3.3"></script>
+<script src="src/lernstoff.js?v=3.3"></script>
+<script src="src/state.js?v=3.3"></script>
+<script src="src/input.js?v=3.3"></script>
+<script src="src/ui.js?v=3.3"></script>
+<script src="src/world.js?v=3.3"></script>
+<script src="src/battle.js?v=3.3"></script>
+<script src="src/main.js?v=3.3"></script>
 </body>
 </html>
