@@ -8,7 +8,8 @@
 - Der aktuelle Baustand steht in `lexiGO-Baustatus.md` (ebenfalls im Projekt).
 
 ## Technik
-- Client: Phaser.js (per Script-Tag, keine Paketinstallation nötig für den Prototyp).
+- Client: Phaser 3.80.1 per Script-Tag vom CDN (cdnjs), keine Paketinstallation.
+- Stand: `index.html` ist die Version 1.2 aus dem Chat (eine einzelne Datei), Kachelgröße 16 px.
 - Später Backend: Supabase (erst in Phase 6, nicht vorher einbauen).
 
 ## Regeln
