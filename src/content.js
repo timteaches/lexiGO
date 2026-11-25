@@ -63,7 +63,7 @@ LX.Content = {
   // „Meine Monster“: Grafik-Funktion je Monster-ID (LX.Art.<name>) und Texte der Liste
   monsterArt: { mon_holamander: 'holamander' },
   monsterliste: {
-    leer: 'Noch kein Monster gefangen. Schwäche ein Monster im Kampf und fange es dann mit Übersetzungen.',
+    ungefangen: 'noch nicht gefangen',
     summe: '{n} von {m} Monstern gefangen',
     woerter: '{n} von {m} Wörtern entdeckt',
     stufe: 'Stufe {n}',

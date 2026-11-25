@@ -196,7 +196,7 @@ LX.BattleScene = class BattleScene extends Phaser.Scene {
   // Das zurückeroberte Wort fliegt als Text zum Monster
   flyWord(word, cb) {
     const sx = this.hero.x + 6 * this.k, sy = this.hero.y - this.hero.displayHeight * 0.85, tx = this.mon.x, ty = this.mon.y - this.mon.displayHeight * 0.4;
-    const t = this.add.text(sx, sy, word, { fontFamily: 'Fredoka, Nunito, sans-serif', fontSize: '32px', fontStyle: 'bold', color: '#ffd23f', stroke: '#17393f', strokeThickness: 6 }).setOrigin(0.5).setDepth(50);
+    const t = this.add.text(sx, sy, word, { fontFamily: "'Pixelify Sans', monospace", fontSize: '32px', fontStyle: 'bold', color: '#ffd23f', stroke: '#17393f', strokeThickness: 6 }).setOrigin(0.5).setDepth(50);
     this.tweens.add({ targets: t, scale: 1.4, duration: 650, ease: 'Sine.easeIn' });
     this.tweens.add({ targets: t, x: { value: tx, ease: 'Linear' }, y: { value: ty, ease: 'Quad.easeIn' }, duration: 650, onComplete: () => { t.destroy(); cb(); } });
   }

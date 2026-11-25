@@ -150,26 +150,25 @@ const UI = LX.UI = {
     const LS = LX.Lernstoff, T = LX.Content.monsterliste, list = this.el.monstersList, fill = (s, o) => Object.keys(o).reduce((t, k) => t.split('{' + k + '}').join(o[k]), s);
     list.textContent = ''; this.stopMonsterAnim();
     const anims = [];
-    LX.Monster.ids.forEach(id => {
-      const mon = LS.monster(id), art = LX.Art[LX.Content.monsterArt[id]]; if (!mon || !art) return;
+    LS.raw.monster.filter(m => m.implementiert).forEach(m0 => {
+      const id = m0.id, mon = LS.monster(id), art = LX.Art[LX.Content.monsterArt[id]], caught = LX.Monster.has(id); if (!mon || !art) return;
       const netz = LS.netz(mon.wortnetz), words = LS.woerterImNetz(mon.wortnetz), got = words.filter(w => LX.Sammlung.has(w.id)).length;
-      const card = document.createElement('div'); card.className = 'mcard';
+      const card = document.createElement('div'); card.className = 'mcard' + (caught ? '' : ' grey');
       card.innerHTML = `<div class="mhead"><b>${esc(mon.name)}</b><span>${esc(netz ? netz.titel : '')}</span><span class="mcount">${esc(fill(T.woerter, { n: got, m: words.length }))}</span></div><div class="mtiles"></div>`;
       const tiles = card.querySelector('.mtiles');
       [1, 2, 3].forEach(st => {
-        const locked = st > mon.stufe, tile = document.createElement('div'); tile.className = 'mtile' + (locked ? ' locked' : '');
+        const lock = st > mon.stufe, locked = lock || !caught, tile = document.createElement('div'); tile.className = 'mtile' + (locked ? ' locked' : '');
         const cv = document.createElement('canvas'); cv.width = cv.height = 64; const g = cv.getContext('2d', { willReadFrequently: true }); g.imageSmoothingEnabled = false;
         const frames = [art(st, 0, false), art(st, 1, false), art(st, 0, true)];
         const draw = f => { g.clearRect(0, 0, 64, 64); g.drawImage(frames[f], 0, 0);
           if (locked) { const d = g.getImageData(0, 0, 64, 64), p = d.data; for (let i = 0; i < p.length; i += 4) if (p[i + 3]) { p[i] = 42; p[i + 1] = 36; p[i + 2] = 56; } g.putImageData(d, 0, 0); } };
         draw(0); if (!locked) anims.push(draw);
         tile.appendChild(cv);
-        tile.insertAdjacentHTML('beforeend', `<small>${esc(fill(T.stufe, { n: st }))}</small>` + (locked ? `<svg class="lock" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2" fill="#f1ead8" stroke="#17393f" stroke-width="2"/><path d="M8 11V8a4 4 0 018 0v3" fill="none" stroke="#17393f" stroke-width="2.4"/></svg><span>${esc(T.gesperrt)}</span>` : ''));
+        tile.insertAdjacentHTML('beforeend', `<small>${esc(fill(T.stufe, { n: st }))}</small>` + (lock ? `<svg class="lock" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" fill="#f1ead8" stroke="#17393f" stroke-width="2"/><path d="M8 11V8a4 4 0 018 0v3" fill="none" stroke="#17393f" stroke-width="2.4"/></svg>` : '') + (locked ? `<span>${esc(!caught && st === 1 ? T.ungefangen : T.gesperrt)}</span>` : ''));
         tiles.appendChild(tile);
       });
       list.appendChild(card);
     });
-    if (!LX.Monster.count()) list.innerHTML = `<p class="wsoon">${esc(T.leer)}</p>`;
     const total = LS.raw.monster.filter(m => m.implementiert).length;
     this.el.monstersSum.textContent = fill(T.summe, { n: LX.Monster.count(), m: total });
     // Animation Stufe 1: Bildfolge wie im Lernraum, 2 Bilder pro Sekunde
