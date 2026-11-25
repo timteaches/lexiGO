@@ -45,6 +45,18 @@ LX.Content = {
     touch: 'Tipp: Mit dem Joystick links läufst du. Mit dem E-Knopf rechts sprichst du mit anderen.'
   },
 
+  // Dojo-Training (Leitner-Wiederholung); [[…]] = Spanisch, {o|a} = Genus der Figur
+  dojo: {
+    satz: ['[[¿Estás list{o|a}?]] Dann wiederholen wir gemeinsam.',
+           'Ein Wort, das man oft übt, kann einem niemand so leicht stehlen. [[¡Vamos, {name}!]]',
+           '[[¡A repasar!]] Wiederholen macht stark, {name}.'],
+    richtig: ['[[¡Muy bien!]]', '[[¡Perfecto!]]', 'Richtig! Das Wort sitzt.'],
+    falsch: 'Nicht schlimm. Richtig ist: {antwort}. Das kommt gleich noch einmal.',
+    fertig: ['[[¡Fantástico, {name}!]] Alles wiederholt. Komm bald wieder.'],
+    leer: 'Heute ist nichts fällig. Entdecke neue Wörter oder komm später wieder.',
+    fortschritt: '{n} von {m} Wörtern wiederholt'
+  },
+
   // Kampf-Texte (Werte wie Lebenspunkte stehen in content/lernstoff.json, Block "kampf"); [[…]] = Spanisch
   battle: {
     frage: 'Was bedeutet dieses Wort?',
@@ -127,8 +139,7 @@ LX.Content = {
   },
 
   objects: [
-    { k: 'dojo', x: 26.5, y: 9, talk: { name: 'Dojo', at: [26.5, 9.7], r: 22, bubble: [26.5, 6.6],
-      pages: ['Über der Tür glänzt in goldenen Buchstaben: [[DOJO]].', 'Hier wirst du später deine Wörter trainieren.'] } },
+    { k: 'dojo', x: 26.5, y: 9, talk: { name: 'Dojo', at: [26.5, 9.7], r: 22, bubble: [26.5, 6.6], dojo: true } },
     { k: 'house', x: 12, y: 12, v: 0, talk: { name: 'Rosas Haus', at: [12, 12.6], r: 18, bubble: [12, 10.4],
       pages: ['Die Tür ist verschlossen. Drinnen duftet es nach [[café]].'] } },
     { k: 'house', x: 37, y: 11, v: 1, talk: { name: 'Haustür', at: [37, 11.6], r: 18, bubble: [37, 9.4],
@@ -187,8 +198,7 @@ LX.Content = {
               'Sonst rufe ich hier laut [[naranjas]], [[tomates]] und [[pimientos]] aus. Heute fällt mir das Rufen seltsam schwer.',
               'Komm bald wieder, {name}. Dann gibt es hier mehr zu entdecken.'] },
     { id: 'lucia', name: 'Maestra Lucía', look: 'lucia', x: 29.6, y: 10.7, dir: 'down', looks: ['down', 'left', 'down', 'right'],
-      pages: ['[[¡Bienvenid{o|a}, {name}!]]', 'Dies ist das Dojo. Hier wirst du später deine Wörter trainieren.',
-              'Ein Wort, das man oft übt, kann einem niemand so leicht stehlen.'] },
+      dojo: true, tap: true },
     { id: 'tomas', name: 'Abuelo Tomás', look: 'tomas', x: 22.5, y: 17.4, dir: 'down', noBody: true, noShadow: true, fixed: true,
       talk: { at: [22.5, 18.3], r: 20 },
       pages: ['Ah, {name}. Setz dich ruhig einen Moment zu mir.',

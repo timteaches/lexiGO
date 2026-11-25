@@ -21,7 +21,7 @@ const UI = LX.UI = {
     this.el = { start: $('#start'), hud: $('#hud'), hint: $('#hint'), hintName: $('#hintName'), dialog: $('#dialog'), dlgName: $('#dlgName'), dlgText: $('#dlgText'), dlgMore: $('#dlgMore'),
       menu: $('#menu'), touch: $('#touch'), name: $('#hudName'), loc: $('#hudLoc'), face: $('#hudFace'), toast: $('#toast'), ctrl: $('#ctrlBox'), menuWho: $('#menuWho'),
       wordcard: $('#wordcard'), wcNew: $('#wcNew'), wcEs: $('#wcEs'), wcDe: $('#wcDe'), wcCtx: $('#wcCtx'), wcCount: $('#wcCount'), wcSpeak: $('#wcSpeak'),
-      words: $('#words'), wordsList: $('#wordsList'), wordsSum: $('#wordsSum'), wordsCount: $('#wordsCount'), wordsBtn: $('#wordsBtn'), monsters: $('#monsters'), monstersList: $('#monstersList'), monstersSum: $('#monstersSum') };
+      words: $('#words'), wordsList: $('#wordsList'), wordsSum: $('#wordsSum'), wordsCount: $('#wordsCount'), wordsBtn: $('#wordsBtn'), monsters: $('#monsters'), monstersList: $('#monstersList'), monstersSum: $('#monstersSum'), dojoBtn: $('#dojoBtn'), dojoBadge: $('#dojoBadge') };
     this.speakerSvg = this.el.wcSpeak.innerHTML;
     this.isTouch = I.isTouch(); document.body.classList.toggle('touch-on', this.isTouch);
     document.querySelectorAll('.k-keys').forEach(e => e.hidden = this.isTouch);
@@ -45,6 +45,8 @@ const UI = LX.UI = {
       const b = e.target.closest('[data-act]'); if (b || e.target === this.el.words) this.closeWords();
     });
     this.el.monsters.addEventListener('click', e => { const b = e.target.closest('[data-act]'); if (b || e.target === this.el.monsters) this.closeMonsters(); });
+    this.el.dojoBtn.addEventListener('click', () => { if (!this.isBlocking()) LX.Dojo.open(); });
+    LX.Leitner.onChange = () => this.updateDojoBadge(); this.updateDojoBadge(); setInterval(() => this.updateDojoBadge(), 30000);
     this.updateWordsBtn(false);
     ['gesturestart', 'dblclick'].forEach(ev => document.addEventListener(ev, e => e.preventDefault()));
   },
@@ -117,6 +119,8 @@ const UI = LX.UI = {
     return isNew;
   },
   closeWord() { if (!this.card) return; this.card = null; this.el.wordcard.hidden = true; const f = this.onWordClose; this.onWordClose = null; if (f) f(); },
+  // Anzahl fälliger Wörter am Dojo-Knopf; bei 0 kein Badge
+  updateDojoBadge() { const n = LX.Leitner.anzahlFaellig(), b = this.el.dojoBadge; b.hidden = n === 0; b.textContent = n; },
   updateWordsBtn(bump) {
     const b = this.el.wordsBtn; this.el.wordsCount.textContent = LX.Sammlung.count() + '/' + LX.Lernstoff.gesamt();
     if (bump) { b.classList.remove('bump'); void b.offsetWidth; b.classList.add('bump'); }

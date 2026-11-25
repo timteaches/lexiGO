@@ -75,7 +75,7 @@ class MapScene extends Phaser.Scene {
     });
     const coll = val(ty.coll, o);
     if (coll) (Array.isArray(coll[0]) ? coll : [coll]).forEach(([dx, dy, w, h]) => this.addWall(x + dx, y + dy, w, h));
-    if (o.talk) { const t = o.talk; this.interactables.push({ name: t.name, pages: t.pages, x: tp(t.at[0]), y: tp(t.at[1]), r: t.r || 20, bx: tp(t.bubble[0]), by: tp(t.bubble[1]) }); }
+    if (o.talk) { const t = o.talk; this.interactables.push({ name: t.name, pages: t.pages, x: tp(t.at[0]), y: tp(t.at[1]), r: t.r || 20, bx: tp(t.bubble[0]), by: tp(t.bubble[1]), onUse: t.dojo ? (it, done) => LX.Dojo.open(done) : undefined }); }
   }
   // NPC: Person aus den Content-Daten; extra = zusätzliche Felder für das Interaktionsobjekt
   buildNpc(n, extra) {
@@ -192,7 +192,11 @@ class WorldScene extends MapScene {
     this.allObjects.forEach(o => this.buildObject(o));
     this.portals = C.objects.filter(o => o.k === 'gate' && o.open && o.room).map(o => ({ ...posOf(o), room: o.room }));
     this.buildGarlands();
-    C.npcs.forEach(n => this.buildNpc(n));
+    C.npcs.forEach(n => {
+      if (!n.dojo) { this.buildNpc(n); return; }
+      const { npc, it } = this.buildNpc(n, { onUse: (t, done) => LX.Dojo.open(done) });            // Lucía öffnet das Dojo-Training
+      npc.sprite.setInteractive({ useHandCursor: true }); npc.sprite.on('pointerdown', () => { if (!LX.UI.isBlocking() && !this.transitioning && this.player) this.use(it); });
+    });
     this.buildAmbient();
     const cam = this.cameras.main; cam.setBounds(0, 0, W, H); cam.setRoundPixels(true);
     this.game.events.on('blur', () => this.input.keyboard.resetKeys());

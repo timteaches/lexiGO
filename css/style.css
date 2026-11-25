@@ -89,7 +89,7 @@ kbd{display:inline-grid;place-items:center;min-width:28px;height:28px;padding:0 
 .wc-row{display:flex;align-items:center;justify-content:space-between;gap:14px}
 .wc-es{font:700 clamp(32px,6vw,44px)/1.1 'Pixelify Sans',monospace;color:var(--terra-d)}
 .wordcard.isnew .wc-es{color:var(--terra);background:linear-gradient(transparent 62%,rgba(255,201,60,.65) 62%);padding:0 4px;margin-left:-4px}
-.speak{flex:none;width:56px;height:56px;border-radius:50%;border:3px solid var(--ink);background:var(--sun);display:grid;place-items:center;cursor:pointer;box-shadow:0 4px 0 rgba(23,57,63,.35);padding:0}
+.speak{flex:none;width:56px;height:56px;border-radius:0;border:3px solid var(--ink);background:var(--sun);display:grid;place-items:center;cursor:pointer;box-shadow:0 4px 0 rgba(23,57,63,.35);padding:0}
 .speak svg{width:28px;height:28px}
 .speak:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(23,57,63,.35)}
 .wc-de{margin:4px 0 0;font-size:clamp(19px,2.6vw,22px);font-weight:800}
@@ -161,3 +161,12 @@ kbd{display:inline-grid;place-items:center;min-width:28px;height:28px;padding:0 
 .mcard.grey .mhead b{color:#8b8576}
 .mcard.grey .mcount{color:var(--muted)}
 .mcard.grey .mtile{background:#ddd5c2}
+
+/* Dojo-Training und Badge (4.1) */
+.wordsbtn{position:relative}
+.badge{position:absolute;top:-8px;right:-8px;min-width:24px;height:24px;padding:0 5px;background:var(--terra);color:#fff;border:3px solid var(--ink);font:700 13px/18px 'Pixelify Sans',monospace;text-align:center}
+.dj-panel{overflow-y:auto}
+.dj-lucia{margin:6px 0 10px;padding:10px 12px;background:#fdebc8;border:3px solid var(--ink);font-weight:700;font-size:15px;line-height:1.35}
+.dj-lucia b{display:block;font:600 15px 'Pixelify Sans',monospace;color:var(--terra-d)}
+.dj-lucia .es{color:var(--terra-d);font-style:normal}
+#djAns{margin-bottom:4px}

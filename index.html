@@ -41,7 +41,7 @@
 <title>lexiGÓ – Welt 1 · 1.2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&family=Press+Start+2P&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=3.4">
+<link rel="stylesheet" href="css/style.css?v=4.1">
 </head>
 <body>
 <div id="game"></div>
@@ -50,6 +50,7 @@
 <div class="hud" id="hud" hidden>
   <div class="who"><canvas id="hudFace" width="16" height="16"></canvas><div><b id="hudName">Pedro</b><span id="hudLoc">Villapalabra · Dorfplatz</span></div></div>
   <div class="hudr">
+    <button class="wordsbtn" id="dojoBtn" aria-label="Dojo-Training öffnen"><span>Dojo</span><b class="badge" id="dojoBadge" hidden></b></button>
     <button class="wordsbtn" id="wordsBtn" aria-label="Meine Wörter öffnen"><i></i><span id="wordsCount">0/0</span></button>
     <button class="iconbtn" id="menuBtn" aria-label="Menü öffnen"><i></i></button>
   </div>
@@ -77,6 +78,19 @@
     <p class="sub" id="wordsSum"></p>
     <div class="wlist" id="wordsList"></div>
     <button class="btn primary" data-act="close-words">Schließen</button>
+  </div>
+</div>
+
+<div class="overlay" id="dojo" hidden>
+  <div class="panel wide dj-panel" role="dialog" aria-label="Dojo-Training">
+    <h2>Dojo-Training</h2>
+    <p class="sub" id="djProg"></p>
+    <div class="dj-lucia"><b id="djLuciaName"></b><span id="djLucia"></span></div>
+    <p class="bt-msg" id="djMsg" aria-live="polite"></p>
+    <div class="bt-q" id="djQ"><b class="bt-es" id="djEs" lang="es"></b><button class="speak" id="djSpeak" aria-label="Aussprache anhören"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="#17393f"/><path d="M16 8.5c1.2 1 1.8 2.2 1.8 3.5s-.6 2.5-1.8 3.5M18.5 6c2 1.6 3 3.6 3 6s-1 4.4-3 6" stroke="#17393f" stroke-width="2" fill="none" stroke-linecap="round"/></svg></button></div>
+    <div class="bt-ans" id="djAns"></div>
+    <button class="btn primary" id="djNext" hidden>Weiter</button>
+    <button class="btn" id="djEnd">Beenden</button>
   </div>
 </div>
 
@@ -151,18 +165,20 @@
 <div class="toast" id="toast" hidden></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.80.1/phaser.min.js"></script>
-<script src="src/content.js?v=3.4"></script>
-<script src="src/art/figuren.js?v=3.4"></script>
-<script src="src/art/boden.js?v=3.4"></script>
-<script src="src/art/gebaeude.js?v=3.4"></script>
-<script src="src/art/lernraum.js?v=3.4"></script>
-<script src="src/art-monster.js?v=3.4"></script>
-<script src="src/lernstoff.js?v=3.4"></script>
-<script src="src/state.js?v=3.4"></script>
-<script src="src/input.js?v=3.4"></script>
-<script src="src/ui.js?v=3.4"></script>
-<script src="src/world.js?v=3.4"></script>
-<script src="src/battle.js?v=3.4"></script>
-<script src="src/main.js?v=3.4"></script>
+<script src="src/content.js?v=4.1"></script>
+<script src="src/art/figuren.js?v=4.1"></script>
+<script src="src/art/boden.js?v=4.1"></script>
+<script src="src/art/gebaeude.js?v=4.1"></script>
+<script src="src/art/lernraum.js?v=4.1"></script>
+<script src="src/art-monster.js?v=4.1"></script>
+<script src="src/lernstoff.js?v=4.1"></script>
+<script src="src/state.js?v=4.1"></script>
+<script src="src/input.js?v=4.1"></script>
+<script src="src/ui.js?v=4.1"></script>
+<script src="src/world.js?v=4.1"></script>
+<script src="src/battle.js?v=4.1"></script>
+<script src="src/leitner.js?v=4.1"></script>
+<script src="src/dojo.js?v=4.1"></script>
+<script src="src/main.js?v=4.1"></script>
 </body>
 </html>

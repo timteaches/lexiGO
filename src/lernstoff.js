@@ -53,7 +53,7 @@
     load() { try { const v = JSON.parse(sessionStorage.getItem(this.KEY) || '[]'); if (Array.isArray(v)) this.ids = v.filter(id => L.wort(id)); } catch (e) {} },
     save() { try { sessionStorage.setItem(this.KEY, JSON.stringify(this.ids)); } catch (e) {} },
     has(id) { return this.ids.includes(id); },
-    add(id) { if (!L.wort(id) || this.has(id)) return false; this.ids.push(id); this.save(); return true; },
+    add(id) { if (!L.wort(id) || this.has(id)) return false; this.ids.push(id); this.save(); if (LX.Leitner) LX.Leitner.neu(id); return true; },
     count() { return this.ids.length; }
   };
 
