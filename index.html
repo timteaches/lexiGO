@@ -2,31 +2,104 @@
 <html lang="de">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <!-- Kein Zoomen; viewport-fit=cover lässt die Seite bis in die Ecken laufen (Safe Area regeln wir per CSS) -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <!-- "Zum Home-Bildschirm": startet ohne Browserleiste -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="lexiGÓ">
+  <meta name="theme-color" content="#0b0f1a">
+  <meta name="format-detection" content="telephone=no">
   <title>lexiGÓ</title>
   <style>
+    :root {
+      /* Safe-Area-Ränder (Notch, abgerundete Ecken, Home-Indikator); ohne Gerät = 0 */
+      --sal: env(safe-area-inset-left, 0px);
+      --sar: env(safe-area-inset-right, 0px);
+      --sat: env(safe-area-inset-top, 0px);
+      --sab: env(safe-area-inset-bottom, 0px);
+      /* Joystick-Größe: wächst mit dem Gerät, aber begrenzt */
+      --js-base: clamp(110px, 24vmin, 170px);
+      --js-zone: calc(var(--js-base) * 1.5);
+    }
+
     html, body {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
       margin: 0;
       padding: 0;
-      width: 100%;
-      height: 100%;
       overflow: hidden;
+      overscroll-behavior: none;           /* kein Überziehen / Pull-to-Refresh */
       background: #0b0f1a;
+      touch-action: none;                  /* kein Scrollen, Pinch- oder Doppeltipp-Zoom */
+      -webkit-user-select: none;
+      user-select: none;                   /* keine Textmarkierung, keine Lupe */
+      -webkit-touch-callout: none;         /* kein Halten-Menü */
+      -webkit-tap-highlight-color: transparent;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    /* Spielfläche: füllt den sicheren Bereich, Phaser skaliert darin (FIT, zentriert) */
+    #game {
+      position: fixed;
+      left: var(--sal);
+      right: var(--sar);
+      top: var(--sat);
+      bottom: var(--sab);
+      touch-action: none;
+    }
+    canvas {
+      display: block;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      touch-action: none;
+      -webkit-user-drag: none;
+    }
+
+    /* Virtueller Joystick: nur auf Touch-Geräten (Klasse wird von TouchJoystick.js gesetzt) */
+    #joystick {
+      display: none;
+      position: fixed;
+      z-index: 10;
+      left: calc(var(--sal) + 8px);
+      bottom: calc(var(--sab) + 8px);
+      width: var(--js-zone);
+      height: var(--js-zone);
       touch-action: none;
       -webkit-user-select: none;
       user-select: none;
     }
-    #game {
-      width: 100%;
-      height: 100%;
+    .touch-device #joystick { display: block; }
+    #joystick .base {
+      position: absolute;
+      left: 50%; top: 50%;
+      width: var(--js-base);
+      height: var(--js-base);
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      box-sizing: border-box;
+      background: rgba(255, 255, 255, 0.10);
+      border: 2px solid rgba(255, 255, 255, 0.35);
+      pointer-events: none;
     }
-    canvas {
-      image-rendering: pixelated;
-      image-rendering: crisp-edges;
+    #joystick .knob {
+      position: absolute;
+      left: 50%; top: 50%;
+      width: calc(var(--js-base) * 0.42);
+      height: calc(var(--js-base) * 0.42);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.45);
+      border: 2px solid rgba(255, 255, 255, 0.7);
+      box-sizing: border-box;
+      transform: translate(calc(-50% + var(--kx, 0px)), calc(-50% + var(--ky, 0px)));
+      pointer-events: none;
     }
+    #joystick.aktiv .base { background: rgba(255, 255, 255, 0.18); }
+    #joystick.aktiv .knob { background: rgba(255, 255, 255, 0.65); }
   </style>
 </head>
 <body>
@@ -37,14 +110,17 @@
 
   <!-- ?v=… bei jeder Änderung hochzählen (gleich wie GAME_VERSION in src/main.js), damit Safari keine alten Dateien aus dem Cache nimmt -->
   <!-- Eigene Skripte: Daten, Eingabe, Logik, Objekte, Szenen, dann der Start -->
-  <script src="src/state/player.js?v=0.2.0"></script>
-  <script src="src/input/KeyboardInput.js?v=0.2.0"></script>
-  <script src="src/logic/movement.js?v=0.2.0"></script>
-  <script src="src/logic/collision.js?v=0.2.0"></script>
-  <script src="src/objects/PlayerFigure.js?v=0.2.0"></script>
-  <script src="src/world/GameMap.js?v=0.2.0"></script>
-  <script src="src/world/MapLoader.js?v=0.2.0"></script>
-  <script src="src/scenes/WorldScene.js?v=0.2.0"></script>
-  <script src="src/main.js?v=0.2.0"></script>
+  <script src="src/state/player.js?v=0.3.0"></script>
+  <script src="src/input/PageGuards.js?v=0.3.0"></script>
+  <script src="src/input/TouchJoystick.js?v=0.3.0"></script>
+  <script src="src/input/KeyboardInput.js?v=0.3.0"></script>
+  <script src="src/input/InputController.js?v=0.3.0"></script>
+  <script src="src/logic/movement.js?v=0.3.0"></script>
+  <script src="src/logic/collision.js?v=0.3.0"></script>
+  <script src="src/objects/PlayerFigure.js?v=0.3.0"></script>
+  <script src="src/world/GameMap.js?v=0.3.0"></script>
+  <script src="src/world/MapLoader.js?v=0.3.0"></script>
+  <script src="src/scenes/WorldScene.js?v=0.3.0"></script>
+  <script src="src/main.js?v=0.3.0"></script>
 </body>
 </html>

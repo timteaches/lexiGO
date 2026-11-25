@@ -55,7 +55,7 @@ class WorldScene extends Phaser.Scene {
       color: '#ffffff'
     }).setOrigin(1, 1).setScrollFactor(0).setAlpha(0.7);
 
-    this.inputSource = new KeyboardInput(this);
+    this.inputSource = new InputController(this);
 
     // Kamera: sanft folgen, innerhalb der Karte bleiben, Start ohne Anflug.
     const cam = this.cameras.main;
@@ -70,7 +70,12 @@ class WorldScene extends Phaser.Scene {
     const pos = { x: this.player.x, y: this.player.y };
     moveWithCollision(this.map, pos, dir, PLAYER_SPEED, delta);
     this.player.setPosition(pos.x, pos.y);
-    this.player.face(dir);
+    // Blickrichtung in 8 Richtungen einrasten, damit der analoge Joystick die Augen nicht wackeln lässt.
+    const len = Math.hypot(dir.x, dir.y);
+    this.player.face({
+      x: len > 0 && Math.abs(dir.x) >= 0.38 * len ? Math.sign(dir.x) : 0,
+      y: len > 0 && Math.abs(dir.y) >= 0.38 * len ? Math.sign(dir.y) : 0
+    });
     this.updateLabel();
   }
 

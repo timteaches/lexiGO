@@ -60,8 +60,9 @@ function moveAxis(map, pos, a, d, assist) {
 function moveWithCollision(map, pos, dir, speed, deltaMs) {
   const dt = Math.min(deltaMs, MAX_STEP_MS) / 1000;
   const n = normalizeDirection(dir);
-  const straight = (dir.x === 0) !== (dir.y === 0);   // genau eine Achse gedrückt
-  moveAxis(map, pos, 'x', n.x * speed * dt, straight);
-  moveAxis(map, pos, 'y', n.y * speed * dt, straight);
+  // Eckenhilfe nur, wenn die Bewegung (fast) geradeaus geht; gilt auch für den analogen Joystick.
+  const ax = Math.abs(n.x), ay = Math.abs(n.y);
+  moveAxis(map, pos, 'x', n.x * speed * dt, ay <= ax * 0.25);
+  moveAxis(map, pos, 'y', n.y * speed * dt, ax <= ay * 0.25);
   return pos;
 }
