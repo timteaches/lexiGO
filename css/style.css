@@ -170,3 +170,20 @@ kbd{display:inline-grid;place-items:center;min-width:28px;height:28px;padding:0 
 .dj-lucia b{display:block;font:600 15px 'Pixelify Sans',monospace;color:var(--terra-d)}
 .dj-lucia .es{color:var(--terra-d);font-style:normal}
 #djAns{margin-bottom:4px}
+
+/* Fortuna, Werte und Team (4.2) */
+.coins{pointer-events:none;height:48px;padding:0 14px 0 12px;background:var(--panel);border:3px solid var(--ink);box-shadow:0 4px 0 rgba(23,57,63,.35);display:flex;align-items:center;gap:8px;font:600 17px 'Pixelify Sans',monospace;color:var(--ink)}
+.coins i{display:block;width:18px;height:18px;background:var(--sun);border:3px solid var(--ink);box-shadow:inset 3px 3px 0 #fff3b0,inset -3px -3px 0 var(--sun-d)}
+.coins span{font-variant-numeric:tabular-nums}
+.bt-team{display:block;margin-top:4px;font-size:12px;font-weight:700;color:var(--teal);line-height:1.3}
+.bt-team:empty{display:none}
+.mstats{margin-top:8px;padding:8px 10px;background:#fdebc8;border:2px solid #ead9b8}
+.mlv{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.mlv b{font:700 18px 'Pixelify Sans',monospace;color:var(--terra-d)}
+.mlv span,.msafe{font-size:13px;font-weight:700;color:var(--muted)}
+.mgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:6px 0}
+.mgrid span{display:flex;flex-direction:column;align-items:center;padding:4px 2px;background:#fff;border:2px solid var(--ink)}
+.mgrid small{font-size:12px;font-weight:700;color:var(--muted)}
+.mgrid b{font:700 22px/1.1 'Pixelify Sans',monospace}
+.mgrid b.malus{color:var(--terra)}
+.mgrid em{font-style:normal;font-size:11px;font-weight:700;color:var(--terra)}

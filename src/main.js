@@ -12,8 +12,8 @@
     console.error('Lernstoff konnte nicht geladen werden:', err);
     document.getElementById('dataErr').hidden = false; document.getElementById('goBtn').disabled = true;
   };
-  const laden = name => fetch('content/' + name + '.json?v=4.1').then(r => { if (!r.ok) throw new Error(name + ': HTTP ' + r.status); return r.json(); });
+  const laden = name => fetch('content/' + name + '.json?v=4.2').then(r => { if (!r.ok) throw new Error(name + ': HTTP ' + r.status); return r.json(); });
   Promise.all([laden('lernstoff'), laden('lernlogik')])
-    .then(([daten, logik]) => { LX.Lernstoff.init(daten); LX.Leitner.init(logik); start(); })
+    .then(([daten, logik]) => { LX.Lernstoff.init(daten); LX.Leitner.init(logik); LX.Werte.init(logik); start(); })
     .catch(datenFehler);
 }

@@ -45,6 +45,14 @@ LX.Content = {
     touch: 'Tipp: Mit dem Joystick links läufst du. Mit dem E-Knopf rechts sprichst du mit anderen.'
   },
 
+  // Werte, Level und Fortuna (Anzeige in „Meine Monster“, im Kampf und im HUD)
+  werte: {
+    level: 'Level {n}', xp: 'XP {n}/{m}', xpMax: 'XP {n} (max.)',
+    atk: 'ATK', def: 'DEF', lp: 'LP', verblasst: 'verblasst −{n}',
+    sicher: '{n} von {m} Wörtern sicher', team: 'Team',
+    belohnung: '+{xp} XP · +{fortuna} Fortuna', levelUp: '{monster} erreicht Level {n}!'
+  },
+
   // Dojo-Training (Leitner-Wiederholung); [[…]] = Spanisch, {o|a} = Genus der Figur
   dojo: {
     satz: ['[[¿Estás list{o|a}?]] Dann wiederholen wir gemeinsam.',

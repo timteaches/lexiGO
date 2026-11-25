@@ -21,7 +21,7 @@ const UI = LX.UI = {
     this.el = { start: $('#start'), hud: $('#hud'), hint: $('#hint'), hintName: $('#hintName'), dialog: $('#dialog'), dlgName: $('#dlgName'), dlgText: $('#dlgText'), dlgMore: $('#dlgMore'),
       menu: $('#menu'), touch: $('#touch'), name: $('#hudName'), loc: $('#hudLoc'), face: $('#hudFace'), toast: $('#toast'), ctrl: $('#ctrlBox'), menuWho: $('#menuWho'),
       wordcard: $('#wordcard'), wcNew: $('#wcNew'), wcEs: $('#wcEs'), wcDe: $('#wcDe'), wcCtx: $('#wcCtx'), wcCount: $('#wcCount'), wcSpeak: $('#wcSpeak'),
-      words: $('#words'), wordsList: $('#wordsList'), wordsSum: $('#wordsSum'), wordsCount: $('#wordsCount'), wordsBtn: $('#wordsBtn'), monsters: $('#monsters'), monstersList: $('#monstersList'), monstersSum: $('#monstersSum'), dojoBtn: $('#dojoBtn'), dojoBadge: $('#dojoBadge') };
+      words: $('#words'), wordsList: $('#wordsList'), wordsSum: $('#wordsSum'), wordsCount: $('#wordsCount'), wordsBtn: $('#wordsBtn'), monsters: $('#monsters'), monstersList: $('#monstersList'), monstersSum: $('#monstersSum'), dojoBtn: $('#dojoBtn'), dojoBadge: $('#dojoBadge'), coinsCount: $('#coinsCount') };
     this.speakerSvg = this.el.wcSpeak.innerHTML;
     this.isTouch = I.isTouch(); document.body.classList.toggle('touch-on', this.isTouch);
     document.querySelectorAll('.k-keys').forEach(e => e.hidden = this.isTouch);
@@ -46,6 +46,7 @@ const UI = LX.UI = {
     });
     this.el.monsters.addEventListener('click', e => { const b = e.target.closest('[data-act]'); if (b || e.target === this.el.monsters) this.closeMonsters(); });
     this.el.dojoBtn.addEventListener('click', () => { if (!this.isBlocking()) LX.Dojo.open(); });
+    LX.Werte.onChange = () => this.updateCoins(); this.updateCoins();
     LX.Leitner.onChange = () => this.updateDojoBadge(); this.updateDojoBadge(); setInterval(() => this.updateDojoBadge(), 30000);
     this.updateWordsBtn(false);
     ['gesturestart', 'dblclick'].forEach(ev => document.addEventListener(ev, e => e.preventDefault()));
@@ -119,6 +120,7 @@ const UI = LX.UI = {
     return isNew;
   },
   closeWord() { if (!this.card) return; this.card = null; this.el.wordcard.hidden = true; const f = this.onWordClose; this.onWordClose = null; if (f) f(); },
+  updateCoins() { this.el.coinsCount.textContent = LX.Werte.fortuna; },
   // Anzahl fälliger Wörter am Dojo-Knopf; bei 0 kein Badge
   updateDojoBadge() { const n = LX.Leitner.anzahlFaellig(), b = this.el.dojoBadge; b.hidden = n === 0; b.textContent = n; },
   updateWordsBtn(bump) {
@@ -158,7 +160,7 @@ const UI = LX.UI = {
       const id = m0.id, mon = LS.monster(id), art = LX.Art[LX.Content.monsterArt[id]], caught = LX.Monster.has(id); if (!mon || !art) return;
       const netz = LS.netz(mon.wortnetz), words = LS.woerterImNetz(mon.wortnetz), got = words.filter(w => LX.Sammlung.has(w.id)).length;
       const card = document.createElement('div'); card.className = 'mcard' + (caught ? '' : ' grey');
-      card.innerHTML = `<div class="mhead"><b>${esc(mon.name)}</b><span>${esc(netz ? netz.titel : '')}</span><span class="mcount">${esc(fill(T.woerter, { n: got, m: words.length }))}</span></div><div class="mtiles"></div>`;
+      card.innerHTML = `<div class="mhead"><b>${esc(mon.name)}</b><span>${esc(netz ? netz.titel : '')}</span><span class="mcount">${esc(fill(T.woerter, { n: got, m: words.length }))}</span></div>${caught ? this.statsHtml(id) : ''}<div class="mtiles"></div>`;
       const tiles = card.querySelector('.mtiles');
       [1, 2, 3].forEach(st => {
         const lock = st > mon.stufe, locked = lock || !caught, tile = document.createElement('div'); tile.className = 'mtile' + (locked ? ' locked' : '');
@@ -180,6 +182,14 @@ const UI = LX.UI = {
     if (anims.length) this.monsterTimer = setInterval(() => { step = (step + 1) % seq.length; anims.forEach(d => d(seq[step])); }, 500);
     this.monstersOpen = true; this.el.monsters.hidden = false; this.el.hint.hidden = true;
     const b = this.el.monsters.querySelector('.btn'); if (b) b.focus();
+  },
+  // Level, XP, ATK, DEF, LP und sichere Wörter eines gefangenen Monsters
+  statsHtml(id) {
+    const w = LX.Werte.werte(id), Z = LX.Content.werte, f = (s, o) => Object.keys(o).reduce((t, k) => t.split('{' + k + '}').join(o[k]), s);
+    return `<div class="mstats"><div class="mlv"><b>${esc(f(Z.level, { n: w.level }))}</b><span>${esc(w.xpNaechst != null ? f(Z.xp, { n: w.xp, m: w.xpNaechst }) : f(Z.xpMax, { n: w.xp }))}</span></div>`
+      + `<div class="mgrid"><span><small>${esc(Z.atk)}</small><b class="${w.malus ? 'malus' : ''}">${w.atkEff}</b>${w.malus ? `<em>${esc(f(Z.verblasst, { n: w.malus }))}</em>` : ''}</span>`
+      + `<span><small>${esc(Z.def)}</small><b>${w.def}</b></span><span><small>${esc(Z.lp)}</small><b>${w.lp}</b></span></div>`
+      + `<div class="msafe">${esc(f(Z.sicher, { n: w.sicher, m: w.woerterGesamt }))}</div></div>`;
   },
   stopMonsterAnim() { if (this.monsterTimer) { clearInterval(this.monsterTimer); this.monsterTimer = null; } },
   closeMonsters() { if (!this.monstersOpen) return; this.monstersOpen = false; this.el.monsters.hidden = true; this.stopMonsterAnim(); if (document.activeElement) document.activeElement.blur(); },

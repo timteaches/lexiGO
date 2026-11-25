@@ -15,7 +15,7 @@ const B = LX.Battle = {
   active: false, el: null,
   init() {
     this.el = { root: $('#battle'), top: $('.bt-top'), name: $('#btName'), fill: $('#btFill'), lp: $('#btLp'), back: $('#btBack'), panel: $('#btPanel'), msg: $('#btMsg'),
-      es: $('#btEs'), speak: $('#btSpeak'), ans: $('#btAns'), next: $('#btNext'), weak: $('#btWeak'), weakText: $('#btWeakText'), catch: $('#btCatch') };
+      es: $('#btEs'), speak: $('#btSpeak'), ans: $('#btAns'), next: $('#btNext'), weak: $('#btWeak'), weakText: $('#btWeakText'), catch: $('#btCatch'), team: $('#btTeam') };
     const e = this.el;
     e.back.addEventListener('click', () => this.leave());
     e.speak.addEventListener('click', () => { if (this.cur) LX.Speech.speak(this.cur.es); });
@@ -31,7 +31,7 @@ const B = LX.Battle = {
     Object.assign(this, { scene, data, K, mon, active: true, lp: K.monsterLP, weak: false, last: null, queue: [], busy: false, cur: null, mode: 'quiz', fang: null });
     UI.closeDialog(); UI.closeWord(); UI.closeWords(); UI.closeMenu();
     UI.screen = 'battle'; UI.el.hud.hidden = true; UI.el.touch.hidden = true; UI.el.hint.hidden = true; LX.Input.touch = { x: 0, y: 0 };
-    e.root.hidden = false; e.name.textContent = mon.name; e.weak.hidden = true; e.next.hidden = true; e.speak.hidden = !LX.Speech.ok;
+    e.root.hidden = false; e.name.textContent = mon.name; e.team.textContent = this.teamZeile(); e.weak.hidden = true; e.next.hidden = true; e.speak.hidden = !LX.Speech.ok;
     this.updateLp(); this.say(text(C.battle.start));
     this.nextQuestion();
   },
@@ -47,6 +47,18 @@ const B = LX.Battle = {
   },
 
   say(msg) { this.el.msg.innerHTML = rich(msg); },
+  // Kampfsieg: XP für das Monster, Fortuna für die Figur (je Monster einmal)
+  reward(art) {
+    const r = LX.Werte.sieg(this.data.monster.id, art); if (!r) return;
+    const T = C.werte; let t = text(T.belohnung, r);
+    if (r.levelNeu > r.levelAlt) t += ' · ' + text(T.levelUp, { monster: this.mon.name, n: r.levelNeu });
+    LX.UI.toast(t, 4500);
+  },
+  // Team im Kampf: gefangene Monster mit Level und ATK (Malus durch verblasste Wörter sichtbar)
+  teamZeile() {
+    const T = C.werte, z = LX.Monster.ids.map(id => { const w = LX.Werte.werte(id); return LX.Lernstoff.monster(id).name + ' ' + text(T.level, { n: w.level }) + ' · ' + T.atk + ' ' + w.atkEff + (w.malus ? ' (' + text(T.verblasst, { n: w.malus }) + ')' : ''); });
+    return z.length ? T.team + ': ' + z.join(' | ') : '';
+  },
   updateLp() {
     const e = this.el, K = this.K;
     e.fill.style.width = Math.max(0, this.lp / K.monsterLP * 100) + '%';
@@ -100,7 +112,7 @@ const B = LX.Battle = {
         this.scene.monsterHit();
         this.lp = Math.max(1, this.lp - 1);                // das Monster wird nie besiegt, nur geschwächt
         this.updateLp();
-        if (!this.weak && this.lp <= this.K.geschwaechtAb) { this.weak = true; e.weakText.textContent = text(C.battle.geschwaecht); e.weak.hidden = false; this.scene.monsterWeak(); this.scene.layout(); }
+        if (!this.weak && this.lp <= this.K.geschwaechtAb) { this.weak = true; e.weakText.textContent = text(C.battle.geschwaecht); e.weak.hidden = false; this.scene.monsterWeak(); this.reward('geschwaecht'); this.scene.layout(); }
         this.timer = setTimeout(() => this.nextQuestion(), 900);
       });
     } else {
@@ -154,7 +166,7 @@ const B = LX.Battle = {
     e.es.textContent = ''; e.ans.innerHTML = ''; e.speak.hidden = true;
     this.scene.catchMonster(() => {
       if (!this.active) return;
-      LX.Monster.add(this.data.monster.id);
+      LX.Monster.add(this.data.monster.id); this.reward('gefangen');
       this.say(C.battle.gefangen.map(s => text(s, { monster: this.mon.name })).join(' '));
       this.mode = 'fertig'; e.next.hidden = false; this.scene.layout();
     });

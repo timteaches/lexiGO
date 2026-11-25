@@ -45,7 +45,8 @@
   ],
   "kampf": { "minWoerter": 5, "monsterLP": 6, "geschwaechtAb": 2, "fangAufgaben": 3 },
   "monster": [
-    { "id": "mon_holamander", "name": "Holamander", "wortnetz": "netz_saludos", "stufe": 1, "implementiert": true }
+    { "id": "mon_holamander", "name": "Holamander", "wortnetz": "netz_saludos", "stufe": 1, "implementiert": true,
+      "basis": { "atk": 4, "def": 3, "lp": 10 } }
   ],
   "woerter": [
     { "id": "w_hola",          "es": "Hola",          "de": "Hallo",                        "wortnetz": "netz_saludos", "gruppe": "begruessung" },

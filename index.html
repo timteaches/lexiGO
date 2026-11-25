@@ -41,7 +41,7 @@
 <title>lexiGÓ – Welt 1 · 1.2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&family=Press+Start+2P&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=4.1">
+<link rel="stylesheet" href="css/style.css?v=4.2">
 </head>
 <body>
 <div id="game"></div>
@@ -50,6 +50,7 @@
 <div class="hud" id="hud" hidden>
   <div class="who"><canvas id="hudFace" width="16" height="16"></canvas><div><b id="hudName">Pedro</b><span id="hudLoc">Villapalabra · Dorfplatz</span></div></div>
   <div class="hudr">
+    <div class="coins" id="coins" role="status" aria-label="Fortuna"><i></i><span id="coinsCount">0</span></div>
     <button class="wordsbtn" id="dojoBtn" aria-label="Dojo-Training öffnen"><span>Dojo</span><b class="badge" id="dojoBadge" hidden></b></button>
     <button class="wordsbtn" id="wordsBtn" aria-label="Meine Wörter öffnen"><i></i><span id="wordsCount">0/0</span></button>
     <button class="iconbtn" id="menuBtn" aria-label="Menü öffnen"><i></i></button>
@@ -105,7 +106,7 @@
 
 <div class="battle" id="battle" hidden>
   <div class="bt-top">
-    <div class="bt-mon"><b id="btName">Holamander</b><div class="bt-bar"><i id="btFill"></i></div><span class="bt-lp" id="btLp"></span></div>
+    <div class="bt-mon"><b id="btName">Holamander</b><div class="bt-bar"><i id="btFill"></i></div><span class="bt-lp" id="btLp"></span><span class="bt-team" id="btTeam"></span></div>
     <button class="btn bt-back" id="btBack">Zurück</button>
   </div>
   <div class="bt-panel" id="btPanel">
@@ -165,20 +166,21 @@
 <div class="toast" id="toast" hidden></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.80.1/phaser.min.js"></script>
-<script src="src/content.js?v=4.1"></script>
-<script src="src/art/figuren.js?v=4.1"></script>
-<script src="src/art/boden.js?v=4.1"></script>
-<script src="src/art/gebaeude.js?v=4.1"></script>
-<script src="src/art/lernraum.js?v=4.1"></script>
-<script src="src/art-monster.js?v=4.1"></script>
-<script src="src/lernstoff.js?v=4.1"></script>
-<script src="src/state.js?v=4.1"></script>
-<script src="src/input.js?v=4.1"></script>
-<script src="src/ui.js?v=4.1"></script>
-<script src="src/world.js?v=4.1"></script>
-<script src="src/battle.js?v=4.1"></script>
-<script src="src/leitner.js?v=4.1"></script>
-<script src="src/dojo.js?v=4.1"></script>
-<script src="src/main.js?v=4.1"></script>
+<script src="src/content.js?v=4.2"></script>
+<script src="src/art/figuren.js?v=4.2"></script>
+<script src="src/art/boden.js?v=4.2"></script>
+<script src="src/art/gebaeude.js?v=4.2"></script>
+<script src="src/art/lernraum.js?v=4.2"></script>
+<script src="src/art-monster.js?v=4.2"></script>
+<script src="src/lernstoff.js?v=4.2"></script>
+<script src="src/state.js?v=4.2"></script>
+<script src="src/input.js?v=4.2"></script>
+<script src="src/ui.js?v=4.2"></script>
+<script src="src/world.js?v=4.2"></script>
+<script src="src/battle.js?v=4.2"></script>
+<script src="src/leitner.js?v=4.2"></script>
+<script src="src/werte.js?v=4.2"></script>
+<script src="src/dojo.js?v=4.2"></script>
+<script src="src/main.js?v=4.2"></script>
 </body>
 </html>

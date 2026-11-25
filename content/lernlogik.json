@@ -5,5 +5,19 @@
     "neueWoerterFaelligNachTagen": 0,
     "statBonusBox5": 3,
     "verblassenNachTagen": 30
+  },
+  "monster": {
+    "statTick": 1,
+    "statReihenfolge": ["atk", "def", "lp"],
+    "verblassenAtkMalus": 1
+  },
+  "level": {
+    "xpFuerLevel": [0, 10, 25, 45, 70, 100],
+    "bonusLp": 3,
+    "bonusAtkOderDef": 1
+  },
+  "belohnung": {
+    "geschwaecht": { "xp": 5, "fortuna": 3 },
+    "gefangen": { "xp": 10, "fortuna": 10 }
   }
 }
