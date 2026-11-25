@@ -6,6 +6,9 @@ const GAME_WIDTH = 640;
 const GAME_HEIGHT = 360;
 const TILE_SIZE = 32;
 
+// Versionsstand, unten rechts im Spiel angezeigt (zum Prüfen, ob der neue Stand geladen ist).
+const GAME_VERSION = '0.1.2';
+
 const config = {
   type: Phaser.AUTO,
   parent: 'game',

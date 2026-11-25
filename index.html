@@ -35,12 +35,13 @@
   <!-- Phaser 3 mit fester Version -->
   <script src="https://cdn.jsdelivr.net/npm/phaser@3.90.0/dist/phaser.min.js"></script>
 
+  <!-- ?v=… bei jeder Änderung hochzählen (gleich wie GAME_VERSION in src/main.js), damit Safari keine alten Dateien aus dem Cache nimmt -->
   <!-- Eigene Skripte: Daten, Eingabe, Logik, Objekte, Szenen, dann der Start -->
-  <script src="src/state/player.js"></script>
-  <script src="src/input/KeyboardInput.js"></script>
-  <script src="src/logic/movement.js"></script>
-  <script src="src/objects/PlayerFigure.js"></script>
-  <script src="src/scenes/TitleScene.js"></script>
-  <script src="src/main.js"></script>
+  <script src="src/state/player.js?v=0.1.2"></script>
+  <script src="src/input/KeyboardInput.js?v=0.1.2"></script>
+  <script src="src/logic/movement.js?v=0.1.2"></script>
+  <script src="src/objects/PlayerFigure.js?v=0.1.2"></script>
+  <script src="src/scenes/TitleScene.js?v=0.1.2"></script>
+  <script src="src/main.js?v=0.1.2"></script>
 </body>
 </html>

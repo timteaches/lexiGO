@@ -26,6 +26,13 @@ class TitleScene extends Phaser.Scene {
       color: '#ffffff'
     }).setOrigin(0.5, 1);
 
+    // Versionsanzeige, um auf dem iPad zu sehen, welcher Stand geladen ist.
+    this.add.text(width - 4, height - 4, 'v' + GAME_VERSION, {
+      fontFamily: 'Arial, Helvetica, sans-serif',
+      fontSize: '8px',
+      color: '#8899bb'
+    }).setOrigin(1, 1);
+
     this.inputSource = new KeyboardInput(this);
 
     const half = FIGURE_SIZE / 2;
