@@ -16,5 +16,14 @@
 - Name der Spielfigur (Pedro/Sofía) immer als Variable, nie fest im Text.
 - Spanische Texte mit korrekten Akzenten: á é í ó ú ñ ü ¡ ¿.
 - Keine Originaltexte oder Übungen aus Apúntate übernehmen.
-- Ein Schritt pro Sitzung. Am Ende kurz beschreiben, was funktioniert und was offen ist.
-- Keine Dateien ohne Plan-Freigabe löschen oder umbenennen.
+- Ein Schritt pro Sitzung.
+- Dateien nur nach Rückfrage löschen oder umbenennen (nicht rückgängig zu machen).
+
+## Arbeitsweise (verbindlich)
+- Sofort loslegen, nie auf die Freigabe eines Plans warten. Einen Plan gibt es nur, wenn der Prompt ausdrücklich "Mach zuerst nur einen Plan" verlangt.
+- Nur nachfragen, wenn etwas nicht rückgängig zu machen ist oder der Auftrag sich widerspricht.
+- Antworten kurz: am Ende höchstens fünf Zeilen (was geändert wurde, wo ich es sehe, was offen ist). Keine Zusammenfassung der Schritte.
+- Prüfen nur das Nötigste: Syntaxprüfung (`node --check`) und ein kurzer Check des Geänderten. Keine langen Testläufe, keine Screenshot-Serien, keine Randfälle, außer ich verlange es. Fehler findet der Nutzer auf dem iPad.
+- Verhalten, Optik und Texte nur ändern, wenn es im Prompt steht.
+- Ein Commit pro Schritt mit kurzer Beschreibung, Push auf main.
+- Am Ende eines Schritts nur einen kurzen Text für das Baustatus-Dokument ausgeben (drei bis fünf Zeilen), falls das Projektdokument nicht schreibbar ist.
