@@ -9,7 +9,8 @@
 
 ## Technik
 - Client: Phaser 3.80.1 per Script-Tag vom CDN (cdnjs), keine Paketinstallation.
-- Stand: `index.html` ist die Version 1.2 aus dem Chat (eine einzelne Datei), Kachelgröße 16 px.
+- Stand: Version 1.2 aus dem Chat, aufgeteilt in `index.html` (Gerüst), `css/style.css`, `content/lernstoff.json` und `src/*.js` (ohne Modulsystem, Reihenfolge der Skripte siehe `index.html`). Kachelgröße 16 px.
+- Das Spiel läuft nur über einen Webserver oder GitHub Pages, nicht mehr per Doppelklick auf die Datei (der Lernstoff wird per `fetch` geladen).
 - Später Backend: Supabase (erst in Phase 6, nicht vorher einbauen).
 
 ## Regeln

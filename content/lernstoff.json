@@ -1,0 +1,62 @@
+{
+  "schema": 1,
+  "stand": "2026-11-25",
+  "lehrwerke": [
+    {
+      "id": "apuntate_sn_2016",
+      "titel": "¡Apúntate!",
+      "verlag": "Cornelsen",
+      "ausgabe": "Sachsen 2016",
+      "baende": [
+        {
+          "id": "apuntate_b1",
+          "nummer": 1,
+          "lernstufe": 1,
+          "einheiten": [
+            {
+              "id": "b1_u1",
+              "typ": "unidad",
+              "nummer": 1,
+              "titel": "¿Qué tal?",
+              "abschnitte": [
+                { "id": "b1_u1_acercate", "typ": "acercate", "titel": "¡Acércate!",
+                  "thema": "Begrüßung, Verabschiedung, nach dem Befinden fragen",
+                  "spielbar": true, "raum": "raum_b1_u1_acercate", "wortnetze": ["netz_saludos"] },
+                { "id": "b1_u1_a", "typ": "A", "titel": "En el recreo",
+                  "thema": "Verben auf -ar, Subjektpronomen (Sg.), ser (Sg.), el/la",
+                  "spielbar": false, "raum": null, "wortnetze": [] },
+                { "id": "b1_u1_b", "typ": "B", "titel": "Los amigos de Mateo",
+                  "thema": "Plural, ser (Pl.), los/las",
+                  "spielbar": false, "raum": null, "wortnetze": [] }
+              ]
+            },
+            { "id": "b1_m1", "typ": "modulo", "nummer": 1, "titel": "El alfabeto",
+              "thema": "buchstabieren, Wortschatz Klassenraum", "spielbar": false, "abschnitte": [] },
+            { "id": "b1_u2", "typ": "unidad", "nummer": 2, "titel": "En mi casa",
+              "spielbar": false, "abschnitte": [] }
+          ]
+        }
+      ]
+    }
+  ],
+  "wortnetze": [
+    { "id": "netz_saludos", "titel": "Begrüßung, Verabschiedung, Befinden", "art": "T",
+      "monster": "mon_holamander", "abschnitte": ["b1_u1_acercate"] }
+  ],
+  "monster": [
+    { "id": "mon_holamander", "name": "Holamander", "wortnetz": "netz_saludos", "stufe": 1, "implementiert": false }
+  ],
+  "woerter": [
+    { "id": "w_hola",          "es": "Hola",          "de": "Hallo",                        "wortnetz": "netz_saludos", "gruppe": "begruessung" },
+    { "id": "w_buenos_dias",   "es": "Buenos días",   "de": "Guten Morgen",                 "wortnetz": "netz_saludos", "gruppe": "begruessung" },
+    { "id": "w_buenas_tardes", "es": "Buenas tardes", "de": "Guten Tag / Guten Nachmittag", "wortnetz": "netz_saludos", "gruppe": "begruessung" },
+    { "id": "w_buenas_noches", "es": "Buenas noches", "de": "Guten Abend / Gute Nacht",     "wortnetz": "netz_saludos", "gruppe": "begruessung" },
+    { "id": "w_adios",         "es": "Adiós",         "de": "Tschüss / Auf Wiedersehen",    "wortnetz": "netz_saludos", "gruppe": "verabschiedung" },
+    { "id": "w_hasta_luego",   "es": "Hasta luego",   "de": "Bis später",                   "wortnetz": "netz_saludos", "gruppe": "verabschiedung" },
+    { "id": "w_que_tal",       "es": "¿Qué tal?",     "de": "Wie geht’s?",                  "wortnetz": "netz_saludos", "gruppe": "befinden" },
+    { "id": "w_bien",          "es": "Bien",          "de": "Gut",                          "wortnetz": "netz_saludos", "gruppe": "befinden" },
+    { "id": "w_muy_bien",      "es": "Muy bien",      "de": "Sehr gut",                     "wortnetz": "netz_saludos", "gruppe": "befinden" },
+    { "id": "w_mal",           "es": "Mal",           "de": "Schlecht",                     "wortnetz": "netz_saludos", "gruppe": "befinden" },
+    { "id": "w_regular",       "es": "Regular",       "de": "So lala",                      "wortnetz": "netz_saludos", "gruppe": "befinden" }
+  ]
+}
